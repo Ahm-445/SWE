@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('../public/Alfarooq.ttf') format('truetype'); /* Vite serves files in public/ from the root '/' */
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; 
+}
+
+@theme {
+  --font-custom: 'MyCustomFont', sans-serif;
+}
