@@ -36,7 +36,7 @@ export default function Evaluation() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-28 relative">
+    <div dir="rtl" className=" overflow-y-auto min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-28 relative">
       <div className="max-w-3xl mx-auto">
         
         {/* رأس الصفحة */}
