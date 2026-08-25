@@ -321,8 +321,6 @@ export default function Evaluation() {
         />
       )}
 
-      {/* الفوتر */}
-      <footer className="mt-20 w-full h-[80px] bg-[url('/back.png')] bg-repeat-x bg-[length:auto_100%] border-t border-[#e6dfd5]"></footer>
     </div>
   );
 }
