@@ -94,8 +94,7 @@ export default function Evaluation() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-28 relative">
-      <div className="max-w-4xl mx-auto">
+<div dir="rtl" className="overflow-y-auto min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-32 relative">      <div className="max-w-4xl mx-auto">
         
         {/* الترويسة */}
         <div className="text-center mb-8">
@@ -322,7 +321,8 @@ export default function Evaluation() {
         />
       )}
 
-      <footer className="absolute bottom-0 left-0 w-full h-[80px] bg-[url('/back.png')] bg-repeat-x bg-[length:auto_100%] border-t border-[#e6dfd5] z-10"></footer>
+      {/* الفوتر */}
+      <footer className="mt-20 w-full h-[80px] bg-[url('/back.png')] bg-repeat-x bg-[length:auto_100%] border-t border-[#e6dfd5]"></footer>
     </div>
   );
 }
