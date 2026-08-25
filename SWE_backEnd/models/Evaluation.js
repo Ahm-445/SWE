@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose =  require ("mongoose");
 
 const TargetSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
@@ -30,5 +30,7 @@ const ReviewSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export const Target = mongoose.model("Target", TargetSchema);
-export const Review = mongoose.model("Review", ReviewSchema);
+const Target = mongoose.model("Target", TargetSchema);
+const Review = mongoose.model("Review", ReviewSchema);
+
+module.exports = { Target, Review };
