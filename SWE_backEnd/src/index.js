@@ -4,6 +4,7 @@ require('dotenv').config();
 const connectDB = require('../config/db');
 
 const telRoutes = require('../routes/telRoutes');
+const evaluationRoutes = require("../routes/evaluations.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;

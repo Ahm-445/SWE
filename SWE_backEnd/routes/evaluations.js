@@ -1,5 +1,5 @@
-import express from "express";
-import { Target, Review } from "../models/Evaluation.js";
+const express = require( "express");
+const { Target, Review } = require( "../models/Evaluation.js");
 
 const router = express.Router();
 
@@ -114,4 +114,4 @@ router.post("/review", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
