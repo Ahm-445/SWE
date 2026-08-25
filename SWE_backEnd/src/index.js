@@ -19,6 +19,7 @@ app.use('/api/tel', telRoutes);
 app.get('/', (req, res) => {
   res.send('API Server is running');
 });
+app.use("/api/evaluations", evaluationRoutes);
 
 
 app.listen(PORT, () => {

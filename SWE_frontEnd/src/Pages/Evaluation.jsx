@@ -45,25 +45,34 @@ export default function Evaluation() {
 
   // بحث لحظي مع كل حرف (Auto-complete)
   useEffect(() => {
-    if (!query.trim()) {
-      setSuggestions([]);
-      setShowDropdown(false);
-      return;
-    }
+  // منع إرسال الطلب نهائياً إذا كان الإدخال فارغاً أو أقل من حرفين
+  if (!query || query.trim().length < 2) {
+    setSuggestions([]);
+    setShowDropdown(false);
+    return;
+  }
 
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=${tab}`);
-        const data = await res.json();
-        setSuggestions(data);
-        setShowDropdown(true);
-      } catch (err) {
-        console.error("فشل جلب الاقتراحات:", err);
+  const timer = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query.trim())}&type=${tab}`);
+      
+      if (!res.ok) {
+        setSuggestions([]);
+        return;
       }
-    }, 250);
+      
+      const data = await res.json();
+      setSuggestions(Array.isArray(data) ? data : []);
+      setShowDropdown(true);
+    } catch (err) {
+      console.error("فشل جلب الاقتراحات:", err);
+      setSuggestions([]);
+    }
+  }, 300);
 
-    return () => clearTimeout(timer);
-  }, [query, tab]);
+  return () => clearTimeout(timer);
+}, [query, tab]);
+
 
   // جلب التفاصيل والإحصائيات
   const loadTargetDetails = async (targetId) => {
