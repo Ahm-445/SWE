@@ -306,7 +306,11 @@ export default function Evaluation() {
           </div>
         )}
 
+        <div className="h-44 w-full pointer-events-none" />
+
       </div>
+
+      
 
       {/* نافذة التقييم متدرجة الخطوات (Wizard Modal) */}
       {isModalOpen && (
