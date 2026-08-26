@@ -7,7 +7,7 @@ import Evaluation from "./Pages/Evaluation";
 
 function App() {
   return (
-    <div className="flex flex-col h-screen overflow-hidden dir-rtl">
+    <div className="flex flex-col h-screen overflow-auto dir-rtl">
       
 
   <BrowserRouter>
