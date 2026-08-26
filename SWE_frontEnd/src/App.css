@@ -12,3 +12,8 @@
 @theme {
   --font-custom: 'MyCustomFont', sans-serif;
 }
+
+html, body, #root {
+  min-height: 100%;
+  overflow-y: auto;
+}
