@@ -94,7 +94,7 @@ export default function Evaluation() {
   };
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-48">      
+    <div dir="rtl" className="w-full min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-35">      
     <div className="max-w-4xl mx-auto">
         
         {/* الترويسة */}
