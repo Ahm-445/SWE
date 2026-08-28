@@ -4,6 +4,8 @@ import GPA from "./Pages/GPA"
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import News from "./Pages/News";
 import Evaluation from "./Pages/Evaluation";
+import Absence from "./Pages/Absence";
+
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
         <Route path="/news" element={<><Navbar/><News /></>} />
         <Route path="/gpa" element={<><Navbar/><GPA /></>} />
         <Route path="/evaluation" element={<><Navbar/><Evaluation /></>} />
+        <Route path="/absence" element={<><Navbar/><Absence /></>} />
       </Routes>
     </BrowserRouter>
 
