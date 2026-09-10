@@ -8,7 +8,8 @@ export default function News(){
     useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch("https://swe-78u0.onrender.com/api/tel/cards");        const data = await response.json();
+        const response = await fetch("http://localhost:8000/api/tel/cards");        
+        const data = await response.json();
         if (data.success) {
           setCards(data.cards);
         }
@@ -34,7 +35,7 @@ export default function News(){
                     ) : (
                         cards.map((item) => (
                         <Card
-                            key={item.telId || item._id}
+                            key={item.telId || item.id}
                             title={item.title}
                             text={item.content}
                             img={item.imageUrl}

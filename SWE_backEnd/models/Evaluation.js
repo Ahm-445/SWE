@@ -1,36 +1,24 @@
-const mongoose =  require ("mongoose");
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const TargetSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true },
-  type: { type: String, enum: ["doctor", "subject"], required: true },
-  department: { type: String, default: "هندسة البرمجيات" },
-  viewsCount: { type: Number, default: 0 },
+const Target = sequelize.define('Target', {
+  name: { type: DataTypes.STRING, allowNull: false },
+  type: { type: DataTypes.ENUM("doctor", "subject"), allowNull: false },
+  department: { type: DataTypes.STRING, defaultValue: "هندسة البرمجيات" },
+  viewsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
+})
+
+const Review = sequelize.define('Review', {
+  explanation: { type: DataTypes.FLOAT, allowNull: false },
+  dealing: { type: DataTypes.FLOAT, allowNull: false },
+  grading: { type: DataTypes.FLOAT, allowNull: false },
+  attendance: { type: DataTypes.FLOAT, allowNull: false },
+  tags: { type: DataTypes.JSON, defaultValue: [] }, // JSON يدعم المصفوفات في SQLite
+  comment: { type: DataTypes.STRING(500) },
+  subjectName: { type: DataTypes.STRING },
+  grade: { type: DataTypes.STRING },
 });
 
-
-const ReviewSchema = new mongoose.Schema({
-  targetId: { type: mongoose.Schema.Types.ObjectId, ref: "Target", required: true },
-  
-
-  ratings: {
-    explanation: { type: Number, required: true, min: 1, max: 5 }, // الشرح
-    dealing: { type: Number, required: true, min: 1, max: 5 },     // التعامل
-    grading: { type: Number, required: true, min: 1, max: 5 },     // الدرجات
-    attendance: { type: Number, required: true, min: 1, max: 5 },  // التحضير
-  },
-
-
-  tags: [{ type: String }],
-
-
-  comment: { type: String, trim: true, maxlength: 500 },
-  subjectName: { type: String, trim: true },
-  grade: { type: String },
-
-  createdAt: { type: Date, default: Date.now },
-});
-
-const Target = mongoose.model("Target", TargetSchema);
-const Review = mongoose.model("Review", ReviewSchema);
-
+Target.hasMany(Review, { foreignKey: 'targetId' });
+Review.belongsTo(Target, { foreignKey: 'targetId' });
 module.exports = { Target, Review };

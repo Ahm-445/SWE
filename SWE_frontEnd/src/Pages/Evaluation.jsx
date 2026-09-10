@@ -14,7 +14,7 @@ const AVAILABLE_TAGS = [
 
 const GRADES = ["أ+", "أ", "ب+", "ب", "ج+", "ج", "د+", "د", "هـ", "حذفت المادة"];
 
-const API_BASE = "https://swe-78u0.onrender.com/api/evaluations"; // ضع رابط الباك إند هنا
+const API_BASE = "http://localhost:8000/api/evaluations"; // ضع رابط الباك إند هنا
 
 export default function Evaluation() {
   const [tab, setTab] = useState("doctor");
@@ -147,10 +147,10 @@ export default function Evaluation() {
               <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-[#e6dfd5] shadow-xl overflow-hidden z-50">
                 {suggestions.map((item) => (
                   <div
-                    key={item._id}
+                    key={item.id}
                     onClick={() => {
                       setQuery(item.name);
-                      loadTargetDetails(item._id);
+                      loadTargetDetails(item.id);
                     }}
                     className="p-3.5 hover:bg-amber-50/70 cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-none transition-colors"
                   >
@@ -262,7 +262,7 @@ export default function Evaluation() {
                 </div>
               ) : (
                 details.reviews.map((rev) => (
-                  <div key={rev._id} className="bg-white rounded-2xl p-5 border border-[#e6dfd5] shadow-sm space-y-3">
+                  <div key={rev.id} className="bg-white rounded-2xl p-5 border border-[#e6dfd5] shadow-sm space-y-3">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                       <div className="flex items-center gap-2">
                         {rev.subjectName && (
@@ -357,7 +357,7 @@ function ReviewWizardModal({ target, targetName, tab, onClose, onSuccess }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          targetId: target?._id,
+          targetId: target?.id,
           targetName: target?.name || targetName,
           type: tab,
           ratings,
