@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import News from "./Pages/News";
 import Evaluation from "./Pages/Evaluation";
 import Absence from "./Pages/Absence";
+import Table from "./Pages/table";
+import NotFound404 from "./Pages/NotFound404";
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
         <Route path="/gpa" element={<><Navbar/><GPA /></>} />
         <Route path="/evaluation" element={<><Navbar/><Evaluation /></>} />
         <Route path="/absence" element={<><Navbar/><Absence /></>} />
+        <Route path="/schedule" element={<><Navbar/><Table /></>} />
+        <Route path="*" element={<><Navbar/><NotFound404 /></>} />
       </Routes>
     </BrowserRouter>
 

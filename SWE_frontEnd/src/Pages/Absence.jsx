@@ -255,6 +255,7 @@ export default function Absence() {
         </div>
 
         <div className="h-28 w-full pointer-events-none" />
+        
       </div>
 
     </div>
