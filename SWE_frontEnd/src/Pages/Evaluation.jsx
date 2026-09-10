@@ -14,7 +14,7 @@ const AVAILABLE_TAGS = [
 
 const GRADES = ["أ+", "أ", "ب+", "ب", "ج+", "ج", "د+", "د", "هـ", "حذفت المادة"];
 
-const API_BASE = "http://localhost:8000/api/evaluations"; // ضع رابط الباك إند هنا
+const API_BASE = "https://swe-78u0.onrender.com/api/evaluations";
 
 export default function Evaluation() {
   const [tab, setTab] = useState("doctor");
