@@ -51,11 +51,8 @@ exports.handleWebhook = async (req, res) => {
       postedAt: new Date(message.date * 1000)
     };
 
-    const card = await TelNewsCard.findOneAndUpdate(
-      { telId: message.message_id },
-      cardData,
-      { upsert: true, new: true }
-    );
+    // استخدام upsert الخاصة بـ Sequelize بدلاً من findOneAndUpdate الخاصة بـ Mongoose
+    const [card] = await TelNewsCard.upsert(cardData);
 
     console.log(`[Card Processed] ID: ${message.message_id}`);
     return res.status(200).json({ success: true, card });
@@ -67,7 +64,8 @@ exports.handleWebhook = async (req, res) => {
 
 exports.getNewsCards = async (req, res) => {
   try {
-    const cards = await TelNewsCard.find().sort({ postedAt: -1 });
+    // تعديل استعلام جلب وترتيب البيانات
+    const cards = await TelNewsCard.findAll({ order: [['postedAt', 'DESC']] });
     return res.status(200).json({ success: true, count: cards.length, cards });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });

@@ -1,13 +1,14 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const telNewsCardSchema = new mongoose.Schema({
-  telId: { type: Number, required: true, unique: true },
-  chatId: { type: Number, required: true },
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  imageUrl: { type: String, default: null },
-  category: { type: String, default: 'Main News' },
-  postedAt: { type: Date, required: true }
-}, { timestamps: true });
+const TelNewsCard = sequelize.define('TelNewsCard', {
+  telId: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+  chatId: { type: DataTypes.INTEGER, allowNull: false },
+  title: { type: DataTypes.STRING, allowNull: false },
+  content: { type: DataTypes.TEXT, allowNull: false },
+  imageUrl: { type: DataTypes.STRING },
+  category: { type: DataTypes.STRING, defaultValue: 'Main News' },
+  postedAt: { type: DataTypes.DATE, allowNull: false }
+});
 
-module.exports = mongoose.model('TelNewsCard', telNewsCardSchema);
+module.exports = TelNewsCard;
