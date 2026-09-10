@@ -1,10 +1,15 @@
 const express = require("express");
 const { Op } = require("sequelize");
+const { body, query, param } = require('express-validator');
 const { Target, Review } = require("../models/Evaluation.js");
-
+const validateInputs = require('../middlewares/validateInputs');
 const router = express.Router();
 
-router.get("/search", async (req, res) => {
+
+router.get("/search", [
+  query('q').optional().isString().trim().escape(),
+  query('type').optional().isIn(['doctor', 'subject'])
+], validateInputs, async (req, res) => {
   try {
     const { q, type } = req.query;
     if (!q) return res.json([]);
@@ -20,7 +25,9 @@ router.get("/search", async (req, res) => {
 });
 
 
-router.get("/target/:id", async (req, res) => {
+router.get("/target/:id", [
+  param('id').isInt().withMessage('المعرف يجب أن يكون رقماً')
+], validateInputs, async (req, res) => {
   try {
     const target = await Target.findByPk(req.params.id);
     if (!target) return res.status(404).json({ error: "غير موجود" });
@@ -75,7 +82,23 @@ router.get("/target/:id", async (req, res) => {
 });
 
 
-router.post("/review", async (req, res) => {
+router.post("/review", [
+  body('targetId').optional().isInt(),
+  body('targetName').optional().isString().trim().escape(),
+  body('type').optional().isIn(['doctor', 'subject']),
+  
+  body('ratings.explanation').isFloat({ min: 1, max: 5 }),
+  body('ratings.dealing').isFloat({ min: 1, max: 5 }),
+  body('ratings.grading').isFloat({ min: 1, max: 5 }),
+  body('ratings.attendance').isFloat({ min: 1, max: 5 }),
+  
+  body('tags').optional().isArray({ max: 5 }),
+  
+  body('comment').optional().isString().trim().isLength({ max: 500 }).escape(),
+  body('subjectName').optional().isString().trim().escape(),
+  body('grade').optional().isString().trim().escape()
+
+], validateInputs, async (req, res) => {
   try {
     const { targetId, targetName, type, ratings, tags, comment, subjectName, grade } = req.body;
     let target;
