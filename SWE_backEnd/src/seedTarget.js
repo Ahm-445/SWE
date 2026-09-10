@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { sequelize } = require('../config/db.js'); 
-const { Target } = require('..models/Evaluation.js'); 
+const { Target } = require('../models/Evaluation.js'); 
 
 const seedDatabase = async () => {
   try {
