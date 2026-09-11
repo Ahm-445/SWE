@@ -6,6 +6,7 @@ import News from "./Pages/News";
 import Evaluation from "./Pages/Evaluation";
 import Absence from "./Pages/Absence";
 import Table from "./Pages/table";
+import Contacts from "./Pages/Contacts";
 import NotFound404 from "./Pages/NotFound404";
 
 
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
         <Route path="/evaluation" element={<><Navbar/><Evaluation /></>} />
         <Route path="/absence" element={<><Navbar/><Absence /></>} />
         <Route path="/schedule" element={<><Navbar/><Table /></>} />
+        <Route path="/contact" element={<><Navbar/><Contacts /></>} />
         <Route path="*" element={<><Navbar/><NotFound404 /></>} />
       </Routes>
     </div>

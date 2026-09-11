@@ -8,7 +8,8 @@ import {
   Star, 
   Newspaper, 
   Menu, 
-  X 
+  X,
+  Mail
 } from "lucide-react";
 
 export default function Navbar() {
@@ -26,6 +27,7 @@ export default function Navbar() {
     { title: "الغياب", icon: UserX, path: "/absence" },
     { title: "التقييم", icon: Star, path: "/evaluation" },
     { title: "أخبار", icon: Newspaper, path: "/news" },
+    { title: "تواصل", icon: Mail, path: "/contact" }
   ];
 
   return (
