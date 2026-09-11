@@ -33,11 +33,6 @@ connectDB().then(() => {
 });
 
 
-//temp code
-app.get('/api/download-db', (req, res) => {
-  res.download('/var/data/database.sqlite', 'my-database.sqlite');
-});
-
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
