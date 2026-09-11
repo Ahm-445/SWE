@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { sequelize, connectDB } = require('../config/db.js');
-const contactRoutes = require('./routes/contacts.js'); // في الأعلى مع الاستدعاءات
+const contactRoutes = require('../routes/contacts.js'); // في الأعلى مع الاستدعاءات
 const telRoutes = require('../routes/telRoutes');
 const evaluationRoutes = require("../routes/evaluations.js");
 
