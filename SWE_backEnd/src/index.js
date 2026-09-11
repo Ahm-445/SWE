@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { sequelize, connectDB } = require('../config/db.js');
-
+const contactRoutes = require('./routes/contacts.js'); // في الأعلى مع الاستدعاءات
 const telRoutes = require('../routes/telRoutes');
 const evaluationRoutes = require("../routes/evaluations.js");
 
@@ -21,9 +21,9 @@ app.get('/', (req, res) => {
   res.send('API Server is running');
 });
 app.use("/api/evaluations", evaluationRoutes);
+app.use("/api/contacts", contactRoutes); 
 
 connectDB().then(() => {
-  // force: false تعني عدم مسح البيانات الموجودة مسبقاً، alter: true لتحديث الهيكل إذا تغير
   sequelize.sync({ alter: true }).then(() => {
     console.log("Database tables synced");
     app.listen(PORT, () => {
