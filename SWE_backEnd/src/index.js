@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const { sequelize, connectDB } = require('../config/db.js');
-const contactRoutes = require('../routes/contacts.js');
-const telRoutes = require('../routes/telRoutes.js');
-const evaluationRoutes = require('../routes/evaluations.js');
+const { sequelize, connectDB } = require('./config/db.js');
+const contactRoutes = require('./routes/contacts.js');
+const telRoutes = require('./routes/telRoutes.js');
+const evaluationRoutes = require('./routes/evaluations.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
