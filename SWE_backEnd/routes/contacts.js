@@ -9,7 +9,7 @@ router.get('/search', async (req, res) => {
     if (!q) return res.json([]);
 
     const doctors = await DoctorContact.findAll({
-      where: { name: { [Op.like]: `%${q.trim()}%` } },
+      where: { name: { [Op.iLike]: `%${q.trim()}%` } }, // استخدام iLike في Postgres
       limit: 8
     });
     

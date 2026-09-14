@@ -5,7 +5,6 @@ const { Target, Review } = require("../models/Evaluation.js");
 const validateInputs = require('../middlewares/validateInputs');
 const router = express.Router();
 
-
 router.get("/search", [
   query('q').optional().isString().trim().escape(),
   query('type').optional().isIn(['doctor', 'subject'])
@@ -14,7 +13,7 @@ router.get("/search", [
     const { q, type } = req.query;
     if (!q) return res.json([]);
 
-    const whereClause = { name: { [Op.like]: `%${q.trim()}%` } };
+    const whereClause = { name: { [Op.iLike]: `%${q.trim()}%` } }; // استبدال Op.like بـ Op.iLike
     if (type) whereClause.type = type;
 
     const targets = await Target.findAll({ where: whereClause, limit: 6 });
@@ -23,7 +22,6 @@ router.get("/search", [
     res.status(500).json({ error: "خطأ في البحث" });
   }
 });
-
 
 router.get("/target/:id", [
   param('id').isInt().withMessage('المعرف يجب أن يكون رقماً')
@@ -81,23 +79,18 @@ router.get("/target/:id", [
   }
 });
 
-
 router.post("/review", [
   body('targetId').optional().isInt(),
   body('targetName').optional().isString().trim().escape(),
   body('type').optional().isIn(['doctor', 'subject']),
-  
   body('ratings.explanation').isFloat({ min: 1, max: 5 }),
   body('ratings.dealing').isFloat({ min: 1, max: 5 }),
   body('ratings.grading').isFloat({ min: 1, max: 5 }),
   body('ratings.attendance').isFloat({ min: 1, max: 5 }),
-  
   body('tags').optional().isArray({ max: 5 }),
-  
   body('comment').optional().isString().trim().isLength({ max: 500 }).escape(),
   body('subjectName').optional().isString().trim().escape(),
   body('grade').optional().isString().trim().escape()
-
 ], validateInputs, async (req, res) => {
   try {
     const { targetId, targetName, type, ratings, tags, comment, subjectName, grade } = req.body;
@@ -106,7 +99,6 @@ router.post("/review", [
     if (targetId) {
       target = await Target.findByPk(targetId);
     } else if (targetName) {
-      // Find or create the target instead of upsert
       const [foundTarget] = await Target.findOrCreate({
         where: { name: targetName.trim(), type: type || "doctor" },
         defaults: { name: targetName.trim(), type: type || "doctor" }
@@ -116,7 +108,6 @@ router.post("/review", [
 
     if (!target) return res.status(400).json({ error: "يجب تحديد الدكتور أو المادة" });
 
-    // فككنا كائن ratings لتخزينه كأعمدة منفصلة
     await Review.create({
       targetId: target.id,
       explanation: ratings.explanation,
