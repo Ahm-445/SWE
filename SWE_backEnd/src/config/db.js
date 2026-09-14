@@ -19,7 +19,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
     connectTimeout: 20000 // مهلة 20 ثانية لتفادي التعليق في حال بطء الشبكة
   },
-  logging: console.log, // تفعيل السجلات لمعرفة ما إذا كانت الأوامر تُرسل لقاعدة البيانات
+  logging: false,
   pool: {
     max: 5,
     min: 0,

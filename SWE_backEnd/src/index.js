@@ -27,7 +27,7 @@ const startServer = async () => {
   await connectDB();
   
   // إنشاء الجداول في Neon إن لم تكن موجودة وتحديثها
-  await sequelize.sync({ alter: true });
+  await sequelize.sync();
   console.log("تمت مزامنة جداول قاعدة البيانات بنجاح 🚀");
 
   app.listen(PORT, () => {
