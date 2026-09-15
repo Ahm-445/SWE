@@ -8,8 +8,7 @@ export default function Student() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    //const API_BASE = "https://swe-78u0.onrender.com/api/auth";
-    const API_BASE = "http://localhost:8000/api/auth";
+    const API_BASE = "https://swe-78u0.onrender.com/api/auth";
 
 
     // بيانات تسجيل الدخول

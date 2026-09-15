@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
   const [approvingId, setApprovingId] = useState(null);
 
-  const API_BASE = "http://localhost:8000/api/admin";
+  const API_BASE = "https://swe-78u0.onrender.com/api/admin";
 
   // Get token and user information
   const token = localStorage.getItem("token");
