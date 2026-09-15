@@ -60,9 +60,32 @@ const COURSES_DATA = [
   ];
 
 export default function Absence() {
+  const storedUser = localStorage.getItem("user");
+
+  let user = null;
+
+  try {
+    user = storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    user = null;
+  }
+
+  const storageKey = user?.id
+    ? `swe_absence_courses_${user.id}`
+    : "swe_absence_courses_guest";
+
   const [selectedCourses, setSelectedCourses] = useState(() => {
-    const saved = localStorage.getItem("swe_absence_courses");
-    return saved ? JSON.parse(saved) : [
+    const saved = localStorage.getItem(storageKey);
+
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+
+    return [
       {
         id: "default-1",
         code: "هاب ٣٢١",
@@ -80,8 +103,8 @@ export default function Absence() {
   const searchRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem("swe_absence_courses", JSON.stringify(selectedCourses));
-  }, [selectedCourses]);
+    localStorage.setItem(storageKey, JSON.stringify(selectedCourses));
+  }, [selectedCourses, storageKey]);
 
   useEffect(() => {
     const handleOutside = (e) => {

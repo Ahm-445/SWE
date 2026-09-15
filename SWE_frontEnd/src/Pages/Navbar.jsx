@@ -4,6 +4,7 @@ import {
   Calendar,
   Calculator,
   UserX,
+  User,
   Star,
   Newspaper,
   Menu,
@@ -75,7 +76,7 @@ export default function Navbar() {
       title: "تواصل",
       icon: Mail,
       path: "/contact",
-    },
+    }
   ];
 
   // العناصر التي تظهر فقط بعد تسجيل الدخول
@@ -102,6 +103,12 @@ export default function Navbar() {
     },
   ];
 
+  const studentLoginItem = {
+  title: "الطالب",
+  icon: User,
+  path: "/student",
+};
+
   // لوحة الأدمن
   const adminItems = [
     {
@@ -111,7 +118,7 @@ export default function Navbar() {
     },
   ];
 
-  let navItems = [...publicItems];
+  let navItems = [...publicItems,studentLoginItem];
 
   if (isLoggedIn) {
     navItems = [...authenticatedItems, ...publicItems];
