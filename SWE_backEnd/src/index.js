@@ -6,6 +6,9 @@ const { sequelize, connectDB } = require('./config/db.js');
 const contactRoutes = require('./routes/contacts.js');
 const telRoutes = require('./routes/telRoutes.js');
 const evaluationRoutes = require('./routes/evaluations.js');
+const authRoutes = require('./routes/auth.js');
+const adminRoutes = require('./routes/admin.js');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,13 +24,13 @@ app.get('/', (req, res) => {
 app.use('/api/tel', telRoutes);
 app.use('/api/evaluations', evaluationRoutes);
 app.use('/api/contacts', contactRoutes);
-
-// بدء تشغيل الخادم ومزامنة قاعدة البيانات
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 const startServer = async () => {
   await connectDB();
   
-  // إنشاء الجداول في Neon إن لم تكن موجودة وتحديثها
-  await sequelize.sync();
+
+  await sequelize.sync({alter:true});
   console.log("تمت مزامنة جداول قاعدة البيانات بنجاح 🚀");
 
   app.listen(PORT, () => {
