@@ -112,7 +112,7 @@ export default function Navbar() {
 const studentDashboard = {
   title: "لوحة التحكم",
   icon: User,
-  path: "/student",
+  path: "/dashboard",
 };
 
   // لوحة الأدمن
