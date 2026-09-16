@@ -256,10 +256,6 @@ export default function Dashboard() {
         )
       : 0;
 
-    setProgress(newProgress);
-    saveProgress(newProgress);
-  };
-
   return (
     <div
       dir="rtl"
@@ -453,8 +449,6 @@ export default function Dashboard() {
             {currentCourses.map((course) => {
 
               const courseProgress = progress[course.id] || 0;
-              const isExpanded = expandedCourse === course.id;
-
               return (
                 <div
                   key={course.id}
@@ -551,69 +545,37 @@ export default function Dashboard() {
                   </div>
 
 
-                  {/* Expanded Course */}
-
-                  {isExpanded && (
-                    <div className="border-t border-[#eee7de] bg-[#fbf8f3] p-5">
-
-                      <div className="flex items-center justify-between mb-4">
-
-                        <div>
-                          <p className="text-sm font-extrabold text-gray-800">
-                            تقدمك في {course.code}
-                          </p>
-
-                          <p className="text-xs text-gray-400 mt-1">
-                            حاليًا سنجعل النسبة قابلة للتعديل، وفي المرحلة التالية
-                            ستُحسب من أجزاء المادة التي تضيفها.
-                          </p>
-                        </div>
-
-                        <Target className="w-5 h-5 text-amber-500" />
-
+                  <div className="border-t border-[#eee7de] bg-[#fbf8f3] p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-extrabold text-gray-800">
+                          تقدم المادة
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          النسبة تُحسب تلقائيًا من المحاضرات المكتملة داخل المادة.
+                        </p>
                       </div>
-
-
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="5"
-                        value={courseProgress}
-                        onChange={(e) =>
-                          updateCourseProgress(
-                            course.id,
-                            Number(e.target.value)
-                          )
-                        }
-                        className="w-full accent-amber-500"
-                      />
-
-
-                      <div className="flex justify-between mt-2 text-xs text-gray-400">
-                        <span>0%</span>
-                        <span>50%</span>
-                        <span>100%</span>
-                      </div>
-
-
-                      {course.prerequisite && (
-                        <div className="mt-5 bg-white rounded-2xl border border-[#e6dfd5] p-4">
-
-                          <p className="text-xs text-gray-400 font-bold">
-                            المتطلب السابق
-                          </p>
-
-                          <p className="text-sm font-extrabold text-gray-700 mt-1">
-                            {course.prerequisite}
-                          </p>
-
-                        </div>
-                      )}
-
+                      <Target className="w-5 h-5 text-amber-500" />
                     </div>
-                  )}
 
+                    <div className="mt-4 h-2.5 bg-white rounded-full overflow-hidden border border-[#eee7de]">
+                      <div
+                        className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                        style={{ width: `${courseProgress}%` }}
+                      />
+                    </div>
+
+                    {course.prerequisite && (
+                      <div className="mt-5 bg-white rounded-2xl border border-[#e6dfd5] p-4">
+                        <p className="text-xs text-gray-400 font-bold">
+                          المتطلب السابق
+                        </p>
+                        <p className="text-sm font-extrabold text-gray-700 mt-1">
+                          {course.prerequisite}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -831,6 +793,7 @@ export default function Dashboard() {
     </div>
   );
 
+}
 
 
 /* =========================================================
