@@ -20,9 +20,9 @@ export default function GPACalculator() {
   const [prevHours, setPrevHours] = useState("");
 
   const [courses, setCourses] = useState([
-    { id: 1, name: "مادة 1", hours: 3, gradeWeight: 5.00 },
-    { id: 2, name: "مادة 2", hours: 3, gradeWeight: 4.75 },
-    { id: 3, name: "مادة 3", hours: 4, gradeWeight: 4.50 },
+    { id: 1, name: "", hours: 3, gradeWeight: 5.00 },
+    { id: 2, name: "", hours: 3, gradeWeight: 4.75 },
+    { id: 3, name: "", hours: 4, gradeWeight: 4.50 },
   ]);
 
   const addCourse = () => {
@@ -30,7 +30,7 @@ export default function GPACalculator() {
       ...courses,
       {
         id: Date.now(),
-        name: `مادة ${courses.length + 1}`,
+        name: "",
         hours: 3,
         gradeWeight: 5.00,
       },
@@ -50,7 +50,7 @@ export default function GPACalculator() {
   const handleReset = () => {
     setPrevGpa("");
     setPrevHours("");
-    setCourses([{ id: 1, name: "مادة 1", hours: 3, gradeWeight: 5.00 }]);
+    setCourses([{ id: 1, name: "", hours: 3, gradeWeight: 5.00 }]);
   };
 
   const currentTotalHours = courses.reduce(
