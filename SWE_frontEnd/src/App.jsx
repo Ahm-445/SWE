@@ -11,6 +11,7 @@ import NotFound404 from "./Pages/NotFound404";
 import Student from "./Pages/Student";
 import Dashboard from "./Pages/Dashboard";
 import Admin from "./Pages/Admin";
+import Course from "./Pages/Course";
 
 import ProtectedRoute from "./Components/ProtectedRoute";
 import AdminRoute from "./Components/AdminRoute";
@@ -19,7 +20,7 @@ function AnimatedRoutes() {
   const location = useLocation(); 
 
   return (
-    <div key={location.pathname} className="page-animate flex-1">
+    <div dir="rtl" key={location.pathname} className="page-animate flex-1">
       <Navbar />
         <Routes location={location}>
           <Route path="/" element={<Home />} />
@@ -32,6 +33,7 @@ function AnimatedRoutes() {
             <Route path="/evaluation" element={<Evaluation />} />
             <Route path="/absence" element={<Absence />} />
             <Route path="/schedule" element={<Table />} />
+            <Route path="/course/:courseId" element={<Course />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<Admin />} />

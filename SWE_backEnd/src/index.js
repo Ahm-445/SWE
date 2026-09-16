@@ -8,6 +8,7 @@ const telRoutes = require('./routes/telRoutes.js');
 const evaluationRoutes = require('./routes/evaluations.js');
 const authRoutes = require('./routes/auth.js');
 const adminRoutes = require('./routes/admin.js');
+const courseRoutes = require("./routes/course.js");
 
 
 const app = express();
@@ -26,6 +27,8 @@ app.use('/api/evaluations', evaluationRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use("/api/courses", courseRoutes);
+
 const startServer = async () => {
   await connectDB();
   
