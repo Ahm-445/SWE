@@ -124,10 +124,10 @@ const studentDashboard = {
     },
   ];
 
-  let navItems = [...publicItems,studentLoginItem, studentDashboard];
+  let navItems = [...publicItems,studentLoginItem];
 
   if (isLoggedIn) {
-    navItems = [...authenticatedItems, ...publicItems];
+    navItems = [...authenticatedItems, ...publicItems, studentDashboard];
   }
 
   if (isAdmin) {
