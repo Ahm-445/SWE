@@ -109,6 +109,12 @@ export default function Navbar() {
   path: "/student",
 };
 
+const studentDashboard = {
+  title: "لوحة التحكم",
+  icon: User,
+  path: "/student",
+};
+
   // لوحة الأدمن
   const adminItems = [
     {
@@ -118,7 +124,7 @@ export default function Navbar() {
     },
   ];
 
-  let navItems = [...publicItems,studentLoginItem];
+  let navItems = [...publicItems,studentLoginItem, studentDashboard];
 
   if (isLoggedIn) {
     navItems = [...authenticatedItems, ...publicItems];
