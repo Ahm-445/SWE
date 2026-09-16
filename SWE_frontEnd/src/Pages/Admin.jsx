@@ -10,7 +10,7 @@ import {
   XCircle,
   BookOpen,
   FileText,
-)} from "lucide-react";
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
