@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   BookOpen,
@@ -128,37 +128,25 @@ const curriculum = [
   },
 ];
 
-const progressKey = "swe_dashboard_progress";
+const API_BASE = "https://swe-78u0.onrender.com/api";
 
-function getSavedProgress() {
+function getStoredUser() {
   try {
-    const saved = localStorage.getItem(progressKey);
-    return saved ? JSON.parse(saved) : {};
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
   } catch {
-    return {};
+    return null;
   }
-}
-
-function saveProgress(progress) {
-  localStorage.setItem(progressKey, JSON.stringify(progress));
 }
 
 export default function Dashboard() {
-  const [expandedCourse, setExpandedCourse] = useState(null);
-  const [progress, setProgress] = useState(getSavedProgress);
+  const [progress, setProgress] = useState({});
   const [showCurriculum, setShowCurriculum] = useState(false);
-
-  const storedUser = localStorage.getItem("user");
+  const [isProgressLoading, setIsProgressLoading] = useState(true);
+  const [progressError, setProgressError] = useState("");
 
   const navigate = useNavigate();
-
-  let user = null;
-
-  try {
-    user = storedUser ? JSON.parse(storedUser) : null;
-  } catch {
-    user = null;
-  }
+  const user = getStoredUser();
 
   const currentLevel = user?.term_level || "third";
 
@@ -170,6 +158,89 @@ export default function Dashboard() {
   const totalHours = useMemo(() => {
     return currentCourses.reduce((sum, course) => sum + course.hours, 0);
   }, [currentCourses]);
+
+  const loadProgress = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token || !currentCourses.length) {
+      setProgress({});
+      setIsProgressLoading(false);
+      return;
+    }
+
+    try {
+      setIsProgressLoading(true);
+      setProgressError("");
+
+      const results = await Promise.all(
+        currentCourses.map(async (course) => {
+          const courseId = encodeURIComponent(course.id);
+
+          const [contentResponse, progressResponse] = await Promise.all([
+            fetch(`${API_BASE}/courses/${courseId}/content`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            fetch(`${API_BASE}/courses/${courseId}/progress`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+          ]);
+
+          const contentData = await contentResponse.json();
+          const progressData = await progressResponse.json();
+
+          if (!contentResponse.ok || !progressResponse.ok) {
+            throw new Error(
+              contentData.error ||
+              progressData.error ||
+              "تعذر تحميل تقدم المواد."
+            );
+          }
+
+          const allContent = [
+            ...(contentData.defaultContent || []),
+            ...(contentData.userContent || []),
+          ];
+
+          const lectures = allContent.filter(
+            (item) => item.type === "lecture"
+          );
+
+          const completedIds = new Set(
+            (progressData || [])
+              .filter((item) => item.completed)
+              .map((item) => Number(item.content_id))
+          );
+
+          const value =
+            lectures.length > 0
+              ? Math.round(
+                  (lectures.filter((lecture) =>
+                    completedIds.has(Number(lecture.id))
+                  ).length / lectures.length) * 100
+                )
+              : 0;
+
+          return [course.id, value];
+        })
+      );
+
+      setProgress(Object.fromEntries(results));
+    } catch (error) {
+      console.error("Dashboard progress:", error);
+      setProgressError(error.message || "تعذر تحميل تقدم المواد.");
+    } finally {
+      setIsProgressLoading(false);
+    }
+  }, [currentCourses]);
+
+  useEffect(() => {
+    loadProgress();
+
+    const handleFocus = () => loadProgress();
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [loadProgress]);
 
   const completedCourses = currentCourses.filter(
     (course) => (progress[course.id] || 0) >= 100
@@ -184,12 +255,6 @@ export default function Dashboard() {
           ) / currentCourses.length
         )
       : 0;
-
-  const updateCourseProgress = (courseId, value) => {
-    const newProgress = {
-      ...progress,
-      [courseId]: value,
-    };
 
     setProgress(newProgress);
     saveProgress(newProgress);
@@ -239,6 +304,19 @@ export default function Dashboard() {
               <p className="text-gray-500 mt-2">
                 خلّنا نتابع تقدمك الأكاديمي خطوة بخطوة.
               </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  navigate("/student", { replace: true });
+                }}
+                className="px-5 py-3 rounded-xl bg-gray-900 text-white font-bold hover:bg-gray-800 transition"
+              >
+                تسجيل الخروج
+              </button>
             </div>
 
             {/* Overall progress */}
@@ -358,6 +436,18 @@ export default function Dashboard() {
           </div>
 
 
+          {progressError && (
+            <div className="mx-4 md:mx-6 mt-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 p-4 text-sm font-bold">
+              {progressError}
+            </div>
+          )}
+
+          {isProgressLoading && (
+            <div className="mx-4 md:mx-6 mt-4 rounded-2xl bg-[#fbf8f3] border border-[#e6dfd5] p-4 text-sm font-bold text-gray-500">
+              جاري تحديث تقدم المواد...
+            </div>
+          )}
+
           <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
 
             {currentCourses.map((course) => {
@@ -438,9 +528,9 @@ export default function Dashboard() {
 
                       <button
                         onClick={() => navigate(`/course/${course.id}`)}
-                        className="w-full mt-4 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+                        className="w-full mt-4 py-3 rounded-xl bg-gray-900 text-white font-bold hover:bg-gray-800 transition"
                       >
-                        فتح المادة
+                        دخول للمادة
                       </button>
 
 
@@ -740,7 +830,7 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+
 
 
 /* =========================================================
