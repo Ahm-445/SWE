@@ -12,5 +12,4 @@ export default function AdminError({ error }) {
             </p>
           </div>
         )}
-  );
-}
+
