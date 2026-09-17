@@ -2,7 +2,7 @@ import { CheckCircle2, Trophy } from "lucide-react";
 
 export default function StudyIdea() {
   return (
-    <div className="bg-gray-900 rounded-[2rem] shadow-sm p-6 text-white relative overflow-hidden">
+    <div className=" bg-gray-900 rounded-[2rem] shadow-sm p-6 text-white relative overflow-hidden">
       <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-amber-500/20 blur-2xl" />
 
       <div className="relative">

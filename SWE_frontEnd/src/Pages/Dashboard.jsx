@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { courses } from "../data/courses";
 
+import UpcomingExams from "../Components/dashboard/UpcomingExams";
 import DashboardHero from "../components/dashboard/DashboardHero";
 import StatsSection from "../components/dashboard/StatsSection";
 import CoursesSection from "../components/dashboard/CoursesSection";
@@ -210,25 +211,34 @@ export default function Dashboard() {
           overallProgress={overallProgress}
         />
 
-        <CoursesSection
-          courses={currentCourses}
-          progress={progress}
-          loading={isProgressLoading}
-          error={progressError}
-          currentLevelName={currentLevelName}
-          onOpenCourse={(id) => navigate(`/course/${id}`)}
-        />
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <ExamPlan />
+        <div className=" flex flex-col xl:flex-row gap-6 items-start ">
+          <div className=" flex-1 w-full ">
+            <CoursesSection
+              courses={currentCourses}
+              progress={progress}
+              loading={isProgressLoading}
+              error={progressError}
+              currentLevelName={currentLevelName}
+              onOpenCourse={(id) => navigate(`/course/${id}`)}
+            />
+          </div>
+
+        <div className=" w-full xl:w-[330px] flex-col space-y-6 shrink-0 ">
+          <UpcomingExams courses={currentCourses} />
           <StudyIdea />
-        </section>
+        </div>
 
-        <Curriculum
-          curriculum={curriculum}
-          coursesByLevel={coursesByLevel}
-          currentLevel={currentLevel}
-        />
+        </div>
+
+        <div className="mt-8 md:mt-10">
+          <Curriculum
+            curriculum={curriculum}
+            coursesByLevel={coursesByLevel}
+            currentLevel={currentLevel}
+          />
+        </div>
+        
       </div>
     </div>
   );

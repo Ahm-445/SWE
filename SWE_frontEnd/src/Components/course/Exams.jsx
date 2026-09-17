@@ -1,4 +1,6 @@
-  export const Exams = ({ exams, content, getExamProgress, formatDate, setShowExamModal }) => {
+ import Countdown from "../common/Countdown";
+ 
+ export const Exams = ({ exams, content, getExamProgress, formatDate, setShowExamModal }) => {
      return (
         <section>
 
@@ -97,6 +99,11 @@
                                 exam.exam_date
                                 )}
                             </p>
+
+                            <Countdown
+                                date={exam.exam_date}
+                            />
+
                             </div>
                         </div>
 
