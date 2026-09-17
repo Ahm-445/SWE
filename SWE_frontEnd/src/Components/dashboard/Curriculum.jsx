@@ -9,7 +9,7 @@ export default function Curriculum({
   const [showCurriculum, setShowCurriculum] = useState(false);
 
   return (
-    <section className="bg-white rounded-[2rem] border border-[#e6dfd5] shadow-sm overflow-hidden">
+    <section className=" bg-white rounded-[2rem] border border-[#e6dfd5] shadow-sm overflow-hidden">
       <button
         onClick={() => setShowCurriculum(!showCurriculum)}
         className="w-full p-6 md:p-7 flex items-center justify-between text-right hover:bg-[#fffdfa] transition"
