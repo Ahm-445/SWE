@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminHeader from "../components/admin/AdminHeader";
-import AdminStats from "../components/admin/AdminStats";
-import AdminError from "../components/admin/AdminError";
-import AdminCourseManagement from "../components/admin/AdminCourseManagement";
+import AdminHeader from "../Components/admin/AdminHeader";
+import AdminStats from "../Components/admin/AdminStats";
+import AdminError from "../Components/admin/AdminError";
+import AdminCourseManagement from "../Components/admin/AdminCourseManagement";
 import AdminStudents from "../Components/admin/AdminStudents";
 
 export default function AdminDashboard() {
