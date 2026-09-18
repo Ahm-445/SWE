@@ -1,79 +1,80 @@
 import {
-  Clock,
-  ShieldCheck,
   Users,
+  Clock,
+  BookOpen,
+  FileText
 } from "lucide-react";
 
-export default function AdminStats({
-  pendingCount,
-  allStudentsCount,
-}) {
-  return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-          {/* Pending */}
-          <div className="bg-white rounded-3xl border border-[#e6dfd5] shadow-sm p-5">
-            <div className="flex items-center justify-between">
+export default function AdminStats({stats}){
 
-              <div>
-                <p className="text-sm text-gray-500 font-bold">
-                  طلبات الانتظار
-                </p>
+  const cards=[
+    {
+      title:"عدد الطلاب",
+      value:stats.students,
+      icon:Users
+    },
+    {
+      title:"طلبات الانتظار",
+      value:stats.pending,
+      icon:Clock
+    },
+    {
+      title:"المواد",
+      value:stats.courses,
+      icon:BookOpen
+    },
+    {
+      title:"الاختبارات",
+      value:stats.exams,
+      icon:FileText
+    }
+  ];
 
-                <p className="text-3xl font-extrabold text-gray-800 mt-2">
-                  {pendingCount}
-                </p>
-              </div>
 
-              <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-amber-600" />
-              </div>
+  return(
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
-            </div>
-          </div>
+      {
+        cards.map((card,index)=>{
 
-          {/* Students */}
-          <div className="bg-white rounded-3xl border border-[#e6dfd5] shadow-sm p-5">
-            <div className="flex items-center justify-between">
+          const Icon=card.icon;
 
-              <div>
-                <p className="text-sm text-gray-500 font-bold">
-                  الطلاب
-                </p>
+          return(
+            <div
+              key={index}
+              className="bg-white rounded-3xl border border-[#e6dfd5] p-5 shadow-sm"
+            >
 
-                <p className="text-3xl font-extrabold text-gray-800 mt-2">
-                  {allStudentsCount}
-                </p>
-              </div>
+              <div className="flex items-center justify-between">
 
-              <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-bold">
+                    {card.title}
+                  </p>
 
-            </div>
-          </div>
+                  <h3 className="text-3xl font-black text-[#172033] mt-2">
+                    {card.value}
+                  </h3>
+                </div>
 
-          {/* Admin */}
-          <div className="bg-white rounded-3xl border border-[#e6dfd5] shadow-sm p-5">
-            <div className="flex items-center justify-between">
 
-              <div>
-                <p className="text-sm text-gray-500 font-bold">
-                  صلاحية الحساب
-                </p>
+                <div className="w-12 h-12 rounded-2xl bg-[#fff1d6] flex items-center justify-center">
 
-                <p className="text-lg font-extrabold text-green-600 mt-2">
-                  Admin
-                </p>
-              </div>
+                  <Icon className="text-[#f28c28]"/>
 
-              <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-green-600" />
+                </div>
+
+
               </div>
 
             </div>
-          </div>
+          );
 
-        </div>
+        })
+      }
+
+    </div>
   );
+
 }

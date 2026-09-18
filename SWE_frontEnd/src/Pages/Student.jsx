@@ -160,6 +160,7 @@ export default function Student() {
             <form onSubmit={handleLoginSubmit}>
               <input
                 type="email"
+                dir="ltr"
                 value={loginData.email}
                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                 placeholder="400000000@student.ksu.edu.sa"
@@ -193,6 +194,7 @@ export default function Student() {
               <input
                 type="email"
                 value={signupData.email}
+                dir="ltr"
                 onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                 placeholder="400000000@student.ksu.edu.sa"
                 className="w-full px-4 py-3.5 pr-11 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-sm mt-4"

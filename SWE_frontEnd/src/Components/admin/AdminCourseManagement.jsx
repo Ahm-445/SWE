@@ -23,6 +23,8 @@ export default function AdminCourseManagement({
   toggleExamContent,
   chapters,
   courseExams,
+  onDeleteContent,
+  onDeleteExam,
 }) {
   return (
         <div className="bg-white rounded-3xl border border-[#e6dfd5] shadow-sm overflow-hidden mb-6">
@@ -267,20 +269,35 @@ export default function AdminCourseManagement({
                         لا يوجد محتوى افتراضي حتى الآن.
                       </p>
                     ) : (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {chapters.map((item) => (
                           <div
                             key={item.id}
-                            className="bg-white rounded-xl px-4 py-3 border border-[#e6dfd5]"
+                            className="bg-white rounded-xl px-4 py-3 border border-[#e6dfd5] flex items-center justify-between"
                           >
-                            <div className="flex items-center justify-between gap-3">
-                              <span className="font-bold text-gray-800">
-                                {item.type === "chapter" ? "📚" : "📖"}{" "}
-                                {item.title}
-                              </span>
-                              <span className="text-xs text-gray-400">
-                                #{item.order_index}
-                              </span>
+                            <div className="flex items-center justify-between gap-3 w-full">
+
+                              <div >
+                                <p className="font-bold text-gray-800">
+                                  {item.type === "chapter" ? "📚" : "📖"} {item.title}
+                                </p>
+
+                                <p className="text-xs text-gray-400 mt-1">
+                                  #{item.order_index}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 shrink-0">
+
+                                <button
+                                  onClick={()=>onDeleteContent(item.id)}
+                                  className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"
+                                >
+                                  ✕
+                                </button>
+
+                              </div>
+
                             </div>
                           </div>
                         ))}
@@ -298,18 +315,31 @@ export default function AdminCourseManagement({
                         لا توجد اختبارات افتراضية حتى الآن.
                       </p>
                     ) : (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {courseExams.map((exam) => (
                           <div
                             key={exam.id}
-                            className="bg-white rounded-xl px-4 py-3 border border-[#e6dfd5]"
+                            className="bg-white rounded-xl px-4 py-3 border border-[#e6dfd5] flex items-center justify-between"
                           >
-                            <p className="font-extrabold text-gray-800">
-                              {exam.name}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1" dir="ltr">
-                              {exam.exam_date}
-                            </p>
+
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-extrabold text-gray-800">
+                                  {exam.name}
+                                </p>
+
+                                <p className="text-xs text-gray-500 mt-1" dir="ltr">
+                                  {exam.exam_date}
+                                </p>
+                              </div>
+
+                              <button
+                                onClick={()=>onDeleteExam(exam.id)}
+                                className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"
+                                >
+                                ✕
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

@@ -134,4 +134,53 @@ router.patch(
   }
 );
 
+router.get(
+  "/stats",
+  authenticate,
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const CourseContent = require("../models/CourseContent.js");
+      const CourseExam = require("../models/CourseExam.js");
+
+      const students = await User.count({
+        where: {
+          role: "student"
+        }
+      });
+
+      const pending = await User.count({
+        where: {
+          role: "student",
+          state: "pending"
+        }
+      });
+
+      const courses = await CourseContent.count({
+        distinct: true,
+        col: "course_id"
+      });
+
+      const exams = await CourseExam.count();
+
+
+      res.json({
+        students,
+        pending,
+        courses,
+        exams
+      });
+
+    } catch (error) {
+
+      console.error("Stats error:", error);
+
+      res.status(500).json({
+        error: "Failed to load statistics"
+      });
+
+    }
+  }
+);
+
 module.exports = router;
