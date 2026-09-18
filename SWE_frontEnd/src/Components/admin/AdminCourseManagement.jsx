@@ -322,7 +322,7 @@ export default function AdminCourseManagement({
                             className="bg-white rounded-xl px-4 py-3 border border-[#e6dfd5] flex items-center justify-between"
                           >
 
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-3 w-full">
                               <div>
                                 <p className="font-extrabold text-gray-800">
                                   {exam.name}
@@ -333,12 +333,16 @@ export default function AdminCourseManagement({
                                 </p>
                               </div>
 
-                              <button
-                                onClick={()=>onDeleteExam(exam.id)}
-                                className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"
+                              <div className="flex gap-2 shrink-0">
+
+                                <button
+                                  onClick={()=>onDeleteExam(exam.id)}
+                                  className="w-9 h-9 rounded-xl bg-red-100 text-red-600 flex items-center justify-center"
                                 >
-                                ✕
-                              </button>
+                                  ✕
+                                </button>
+
+                              </div>
                             </div>
                           </div>
                         ))}
