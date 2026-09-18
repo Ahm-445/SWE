@@ -101,18 +101,21 @@ export default function Navbar() {
       icon: Star,
       path: "/evaluation",
     },
-    {
-  title: "لوحة التحكم",
-  icon: User,
-  path: "/dashboard",
-}
+    
   ];
 
-  const studentLoginItem = {
-  title: "الطالب",
-  icon: User,
-  path: "/student",
-};
+  const studentLoginItem = [
+    {
+      title: "الطالب",
+      icon: User,
+      path: "/student"
+    },
+    {
+      title: "لوحة التحكم",
+      icon: User,
+      path: "/dashboard",
+    },
+  ];
 
 
   // لوحة الأدمن
