@@ -4,16 +4,26 @@ import AdminHeader from "../components/admin/AdminHeader";
 import AdminStats from "../components/admin/AdminStats";
 import AdminError from "../components/admin/AdminError";
 import AdminCourseManagement from "../components/admin/AdminCourseManagement";
-import AdminStudents from "../components/admin/AdminStudents";
+import AdminStudents from "../Components/admin/AdminStudents";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [allStudentsCount, setAllStudentsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [approvingId, setApprovingId] = useState(null);
+  const [editingContent,setEditingContent]=useState(null);
+
+  const [stats,setStats] = useState({
+    students:0,
+    pending:0,
+    courses:0,
+    exams:0
+  });
+
 
   const [selectedCourse, setSelectedCourse] = useState("");
   const [chapters, setChapters] = useState([]);
@@ -91,6 +101,7 @@ export default function AdminDashboard() {
       const allData = await allResponse.json();
 
       if (allResponse.ok && Array.isArray(allData)) {
+        setAllStudents(allData);
         setAllStudentsCount(allData.length);
       }
     } catch (err) {
@@ -137,6 +148,15 @@ export default function AdminDashboard() {
           (student) => student.id !== studentId
         )
       );
+
+      setAllStudents((currentStudents) =>
+        currentStudents.map((student) =>
+          student.id === studentId
+            ? { ...student, state: "active" }
+            : student
+        )
+      );
+
     } catch (err) {
       console.error(err);
       setError(err.message || "حدث خطأ أثناء قبول الطالب");
@@ -192,6 +212,26 @@ export default function AdminDashboard() {
       setCourseError(err.message || "حدث خطأ أثناء تحميل المادة");
     } finally {
       setCourseLoading(false);
+    }
+  };
+
+  const fetchStats = async()=>{
+    try{
+      const response = await fetch(
+        `${API_BASE}/stats`,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      const data = await response.json();
+
+      if(response.ok){
+        setStats(data);
+      }
+    }catch(error){
+      console.log(error);
     }
   };
 
@@ -300,6 +340,7 @@ export default function AdminDashboard() {
     }
   };
 
+
   const toggleExamContent = (id) => {
     setExamForm((current) => ({
       ...current,
@@ -312,6 +353,51 @@ export default function AdminDashboard() {
   const defaultChapters = chapters.filter((item) => item.type === "chapter");
   const defaultLectures = chapters.filter((item) => item.type === "lecture");
 
+  const handleDeleteContent = async(id)=>{
+    if(!window.confirm("هل تريد حذف هذا المحتوى؟")) return;
+
+    const response = await fetch(
+      `https://swe-78u0.onrender.com/api/courses/${encodeURIComponent(selectedCourse)}/admin/content/${id}`,
+      {
+        method:"DELETE",
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+      alert(data.error || "Failed");
+      return;
+    }
+
+    fetchCourseData(selectedCourse);
+  };
+
+  const handleDeleteExam = async(id)=>{
+    if(!window.confirm("هل تريد حذف هذا الاختبار؟")) return;
+
+    const response = await fetch(
+      `https://swe-78u0.onrender.com/api/courses/${encodeURIComponent(selectedCourse)}/admin/exams/${id}`,
+      {
+        method:"DELETE",
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok){
+      alert(data.error || "Failed");
+      return;
+    }
+    fetchCourseData(selectedCourse);
+};
+
   // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -322,6 +408,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchStudents();
+    fetchStats();
   }, []);
 
   return (
@@ -334,8 +421,7 @@ export default function AdminDashboard() {
         <AdminHeader currentUser={currentUser} isLoading={isLoading} onRefresh={fetchStudents} onLogout={handleLogout}
         />
 
-        <AdminStats pendingCount={students.length} allStudentsCount={allStudentsCount}
-        />
+        <AdminStats stats={stats}        />
 
         <AdminError error={error} />
 
@@ -350,9 +436,11 @@ export default function AdminDashboard() {
           toggleExamContent={toggleExamContent}
           chapters={chapters}
           courseExams={courseExams}
+          onDeleteContent={handleDeleteContent}
+          onDeleteExam={handleDeleteExam}
         />
 
-        <AdminStudents isLoading={isLoading} students={students} approvingId={approvingId} onApprove={handleApprove}
+        <AdminStudents isLoading={isLoading} students={allStudents} approvingId={approvingId} onApprove={handleApprove}
         />
       </div>
     </div>

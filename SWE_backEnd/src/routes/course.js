@@ -365,4 +365,66 @@ router.post(
   }
 );
 
+
+router.delete(
+  "/:courseId/admin/content/:id",
+  authenticate,
+  requireAdmin,
+  async (req,res)=>{
+    try{
+      const content = await CourseContent.findOne({
+        where:{
+          id:req.params.id,
+          course_id:req.params.courseId
+        }
+      });
+
+      if(!content){
+        return res.status(404).json({
+          error:"Content not found"
+        });
+      }
+      await content.destroy();
+      res.json({
+        message:"Content deleted"
+      });
+    }catch(error){
+      console.error(error);
+      res.status(500).json({
+        error:"Failed deleting content"
+      });
+    }
+  }
+);
+
+router.delete(
+  "/:courseId/admin/exams/:id",
+  authenticate,
+  requireAdmin,
+  async(req,res)=>{
+    try{
+      const exam = await CourseExam.findOne({
+        where:{
+          id:req.params.id,
+          course_id:req.params.courseId
+        }
+      });
+
+      if(!exam){
+        return res.status(404).json({
+          error:"Exam not found"
+        });
+      }
+      await exam.destroy();
+      res.json({
+        message:"Exam deleted"
+      });
+    }catch(error){
+      res.status(500).json({
+        error:"Failed deleting exam"
+      });
+    }
+  }
+);
+
 module.exports = router;

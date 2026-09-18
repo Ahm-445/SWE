@@ -653,8 +653,8 @@ export default function Course() {
 
   // Main
   return (
-    <div dir="rtl" className="min-h-screen bg-[#faf7f2] px-4 py-8 text-right md:px-8">
-      <div className="mx-auto max-w-6xl">
+    <div dir="rtl" className=" min-h-screen bg-[#faf7f2] px-4 py-8 text-right md:px-8">
+      <div className="font-custom mx-auto max-w-6xl">
 
         {/* Header */}
         <CourseHeader
