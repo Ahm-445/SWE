@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, User, BookOpen, Loader2, AlertCircle } from "lucide-react";
 
-import SearchBox from "../components/evaluation/SearchBox";
-import EvaluationResults from "../components/evaluation/EvaluationResults";
-import ReviewWizardModal from "../components/evaluation/ReviewWizardModal";
+import SearchBox from "../Components/evaluation/SearchBox";
+import EvaluationResults from "../Components/evaluation/EvaluationResults";
+import ReviewWizardModal from "../Components/evaluation/ReviewWizardModal";
 
 const API_BASE = "https://swe-78u0.onrender.com/api/evaluations";
 
