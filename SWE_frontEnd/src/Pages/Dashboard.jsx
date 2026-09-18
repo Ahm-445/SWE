@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { courses } from "../data/courses";
 
 import UpcomingExams from "../Components/dashboard/UpcomingExams";
-import DashboardHero from "../components/dashboard/DashboardHero";
-import StatsSection from "../components/dashboard/StatsSection";
-import CoursesSection from "../components/dashboard/CoursesSection";
-import StudyIdea from "../components/dashboard/StudyIdea";
-import Curriculum from "../components/dashboard/Curriculum";
+import DashboardHero from "../Components/dashboard/DashboardHero";
+import StatsSection from "../Components/dashboard/StatsSection";
+import CoursesSection from "../Components/dashboard/CoursesSection";
+import StudyIdea from "../Components/dashboard/StudyIdea";
+import Curriculum from "../Components/dashboard/Curriculum";
 
 const levelNames = {
   third: "المستوى الثالث",
