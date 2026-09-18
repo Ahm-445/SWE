@@ -166,7 +166,7 @@ export const courses = [
   },
   {
     "id": "سلم ١٠٧",
-    "name": "أخالقيات المهنة",
+    "name": "أخلاقيات المهنة",
     "code": "سلم ١٠٧",
     "department": "التربية",
     "prerequisite": "",
@@ -175,7 +175,7 @@ export const courses = [
   },
   {
     "id": "هاب ٤٣٤",
-    "name": "االختبار والتحقق من البرمجيات",
+    "name": "الاختبار والتحقق من البرمجيات",
     "code": "هاب ٤٣٤",
     "department": "هندسة البرمجيات",
     "prerequisite": "هاب ٣٣٣",
