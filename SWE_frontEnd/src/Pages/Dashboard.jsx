@@ -6,7 +6,6 @@ import UpcomingExams from "../Components/dashboard/UpcomingExams";
 import DashboardHero from "../components/dashboard/DashboardHero";
 import StatsSection from "../components/dashboard/StatsSection";
 import CoursesSection from "../components/dashboard/CoursesSection";
-import ExamPlan from "../components/dashboard/ExamPlan";
 import StudyIdea from "../components/dashboard/StudyIdea";
 import Curriculum from "../components/dashboard/Curriculum";
 

@@ -1,4 +1,4 @@
-import { coursesByLevel } from "/Users/ahmed/Desktop/My Project/SWE/SWE_frontEnd/src/Pages/Dashboard.jsx";
+import { coursesByLevel } from "../../Pages/Dashboard";
 
 export function getCurrentUser() {
   try {
