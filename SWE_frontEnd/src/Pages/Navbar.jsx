@@ -76,11 +76,26 @@ export default function Navbar() {
       title: "تواصل",
       icon: Mail,
       path: "/contact",
-    }
+    },
+    {
+      title: "الطالب",
+      icon: User,
+      path: "/student"
+    },
   ];
 
   // العناصر التي تظهر فقط بعد تسجيل الدخول
   const authenticatedItems = [
+    {
+      title: "أخبار",
+      icon: Newspaper,
+      path: "/news",
+    },
+    {
+      title: "تواصل",
+      icon: Mail,
+      path: "/contact",
+    },
     {
       title: "الجدول",
       icon: Calendar,
@@ -101,22 +116,12 @@ export default function Navbar() {
       icon: Star,
       path: "/evaluation",
     },
-    
-  ];
-
-  const studentLoginItem = [
-    {
-      title: "الطالب",
-      icon: User,
-      path: "/student"
-    },
     {
       title: "لوحة التحكم",
       icon: User,
       path: "/dashboard",
     },
   ];
-
 
   // لوحة الأدمن
   const adminItems = [
@@ -127,14 +132,14 @@ export default function Navbar() {
     },
   ];
 
-  let navItems = [...publicItems,studentLoginItem];
+  let navItems = [...publicItems];
 
   if (isLoggedIn) {
-    navItems = [...authenticatedItems, ...publicItems];
+    navItems = [...authenticatedItems];
   }
 
   if (isAdmin) {
-    navItems = [...adminItems, ...authenticatedItems, ...publicItems];
+    navItems = [...adminItems];
   }
 
   return (

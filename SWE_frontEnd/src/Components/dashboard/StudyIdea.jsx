@@ -13,7 +13,7 @@ export default function StudyIdea() {
         <h2 className="text-xl font-extrabold">خطوتك القادمة 🎯</h2>
 
         <p className="text-sm text-gray-300 mt-2 leading-6">
-          قريبًا تقدر تقسم كل مادة إلى Chapters ومحاضرات
+           تقدر تقسم كل مادة إلى Chapters ومحاضرات
           وتحدد الأجزاء الداخلة في كل اختبار، ونحسب لك نسبة
           الإنجاز تلقائيًا.
         </p>
