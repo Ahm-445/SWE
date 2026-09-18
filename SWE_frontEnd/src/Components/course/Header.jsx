@@ -4,7 +4,7 @@ export const CourseHeader = ({ course, progress, completedCount, allLectures, se
   const navigate = useNavigate();
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 font-custom">
 
           <button
             type="button"

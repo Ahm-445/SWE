@@ -10,7 +10,7 @@ export default function AddExamModel({
   savingExam,
 }) {
   return (
-    <div>
+    <div className="font-custom">
 {showExamModal && (
         <div
           dir="rtl"

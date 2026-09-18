@@ -8,7 +8,7 @@ export default function AddContentModel({
   savingContent,
 }) {
   return (
-    <div>
+    <div className="font-custom">
 
     {showAddContent && (
         <div
