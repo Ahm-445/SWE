@@ -7,7 +7,7 @@
       renderLecture,
     }) {
       return (
-   <section className="mb-8">
+   <section className="mb-8 font-custom">
 
           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
