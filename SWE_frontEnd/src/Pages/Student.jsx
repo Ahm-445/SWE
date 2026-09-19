@@ -5,11 +5,32 @@ import { useNavigate } from 'react-router-dom';
 export default function Student() {
     const [tab, setTab] = useState("Login");
     const navigate = useNavigate();
-    const [error, setError] = useState('');
+    const [error, setError] = useState("");
+    const [popup, setPopup] = useState({
+      show:false,
+      type:"error",
+      message:""
+    });    
     const [isLoading, setIsLoading] = useState(false);
 
     const API_BASE = "https://swe-78u0.onrender.com/api/auth";
 
+
+    const showPopup = (message, type="error") => {
+      setPopup({
+        show:true,
+        type,
+        message
+      });
+
+      setTimeout(()=>{
+        setPopup({
+          show:false,
+          type:"",
+          message:""
+        });
+      },3500);
+    };
 
     // بيانات تسجيل الدخول
     const [loginData, setLoginData] = useState({
@@ -21,13 +42,33 @@ export default function Student() {
     const [signupData, setSignupData] = useState({
       name: "",
       email: "",
-      term_level: "",
+      term_level: "third",
       password: "",
       confirmPassword: "",
     });
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      loginData.password.length < 8 ||
+      !/[A-Za-z]/.test(signupData.password) ||
+      !/[0-9]/.test(signupData.password) ||
+      !/[!@#$%^&*]/.test(signupData.password)
+    ) {
+
+      showPopup(
+        "كلمة المرور يجب أن تحتوي على 8 خانات على الأقل وتشمل حرف ورقم ورمز خاص",
+        "error"
+      );
+
+      setIsLoading(false);
+
+      return;
+    }
+
+
+
     try {
       setIsLoading(true);
       const res = await fetch(`${API_BASE}/login`, {
@@ -68,7 +109,7 @@ export default function Student() {
       }
 
     } catch (err) {
-        alert(err.message || "حدث خطأ أثناء تسجيل الدخول");
+        showPopup(err.message || "حدث خطأ أثناء تسجيل الدخول");
     } finally {
       setIsLoading(false);
     }
@@ -79,8 +120,46 @@ export default function Student() {
     setIsLoading(true);
     setError(null);
 
+    if(signupData.name.length < 3){
+      showPopup(
+          "لا يمكن للإسم أن يكون أقل من ٣ أحرف",
+          "error"
+        );      
+      setIsLoading(false);
+      return;
+    }
+
+    if(signupData.name.length < 3){
+      showPopup(
+          "لا يمكن للإسم أن يكون أقل من ٣ أحرف",
+          "error"
+        );      
+      setIsLoading(false);
+      return;
+    }
+
+    if (
+      signupData.password.length < 8 ||
+      !/[A-Za-z]/.test(signupData.password) ||
+      !/[0-9]/.test(signupData.password) ||
+      !/[!@#$%^&*]/.test(signupData.password)
+    ) {
+
+      showPopup(
+        "كلمة المرور يجب أن تحتوي على 8 خانات على الأقل وتشمل حرف ورقم ورمز خاص",
+        "error"
+      );
+
+      setIsLoading(false);
+
+      return;
+    }
+
     if (signupData.password !== signupData.confirmPassword) {
-      alert("كلمتا المرور غير متطابقتين");
+      showPopup(
+          "كلمتا المرور غير متطابقتين",
+          "error"
+        );      
       setIsLoading(false);
       return;
     }
@@ -103,7 +182,7 @@ export default function Student() {
 
       if (!res.ok) {
         if (res.status === 400) {
-          throw new Error("هذا البريد الإلكتروني مسجل مسبقًا");
+          throw new Error(data.error || "هذا البريد الإلكتروني مسجل مسبقًا");
         }
 
         throw new Error(data.error || "فشل إنشاء الحساب");
@@ -113,7 +192,7 @@ export default function Student() {
       setTab("Login");
 
     } catch (err) {
-      setError(err.message);
+      showPopup(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +202,38 @@ export default function Student() {
   return (
     <div dir="rtl" className="w-full min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-36 flex flex-col">
       <div className="max-w-4xl mx-auto w-full flex-1 mb-16">
-        
+          {popup.show && (
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+
+                <div className={` min-w-[320px] rounded-2xl px-5 py-4 shadow-xl border flex items-center gap-3  bg-white
+                  ${
+                    popup.type==="error"
+                    ?
+                    "border-red-200 text-red-700"
+                    :
+                    "border-green-200 text-green-700"
+                  }
+                  `}
+                >
+
+                  <div className=" w-10 h-10 rounded-full  bg-red-100 flex items-center justify-center ">
+                    ⚠️
+                  </div>
+
+                  <div>
+                    <p className="font-extrabold">
+                      تنبيه
+                    </p>
+
+                    <p className="text-sm mt-1">
+                      {popup.message}
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
         {/* الترويسة */}
         <div className="text-center mb-8">
           <p className="text-sm font-bold text-amber-800/60 mb-2">مجتمع هندسة البرمجيات — KSU</p>

@@ -87,7 +87,7 @@ router.post("/review", [
   body('ratings.dealing').isFloat({ min: 1, max: 5 }),
   body('ratings.grading').isFloat({ min: 1, max: 5 }),
   body('ratings.attendance').isFloat({ min: 1, max: 5 }),
-  body('tags').optional().isArray({ max: 5 }),
+  body('tags.*').isString().trim().escape(),
   body('comment').optional().isString().trim().isLength({ max: 500 }).escape(),
   body('subjectName').optional().isString().trim().escape(),
   body('grade').optional().isString().trim().escape()

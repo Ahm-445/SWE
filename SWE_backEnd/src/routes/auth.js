@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const validator = require("validator");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -15,11 +16,36 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, term_level, password } = req.body;
 
+    if(
+      password.length < 8 ||
+      !/[A-Za-z]/.test(password) ||
+      !/[0-9]/.test(password) ||
+      !/[!@#$%^&*]/.test(password)
+      ){
+      return res.status(400).json({
+        error:"Password must contain at least 8 characters, a letter, number and special character."
+      });
+    }
+
     if (!name || !email || !term_level || !password) {
       return res.status(400).json({
         error: "Name, email, term level, and password are required.",
       });
     }
+
+    const cleanEmail = String(email)
+      .trim()
+      .toLowerCase();
+
+    if(!cleanEmail.endsWith("@student.ksu.edu.sa")){
+      return res.status(400).json({
+        error:"Only university email allowed"
+      });
+    }
+
+    name = validator.escape(
+      String(name).trim()
+    );
 
     const existingUser = await User.findOne({ where: { email } });
 

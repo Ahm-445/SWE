@@ -69,6 +69,16 @@ router.post("/:courseId/content", authenticate, async (req, res) => {
       return res.status(400).json({ error: "Title is required." });
     }
 
+    if(
+    !title ||
+    String(title).trim().length < 3 ||
+    String(title).trim().length > 100
+    ){
+      return res.status(400).json({
+        error:"Title length invalid"
+      });
+    }
+
     let parentId = null;
 
     if (type === "lecture") {
@@ -277,6 +287,16 @@ router.post(
         return res.status(400).json({ error: "Title is required." });
       }
 
+      if(
+        !title ||
+        String(title).trim().length < 3 ||
+        String(title).trim().length > 100
+      ){
+        return res.status(400).json({
+          error:"Title length invalid"
+        });
+      }
+
       let parentId = null;
 
       if (type === "lecture") {
@@ -384,7 +404,15 @@ router.delete(
           error:"Content not found"
         });
       }
+      
+      await CourseContent.destroy({
+        where:{
+          parent_id:content.id
+      }
+      });
+
       await content.destroy();
+      
       res.json({
         message:"Content deleted"
       });
