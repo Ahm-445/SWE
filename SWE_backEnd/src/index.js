@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const helmet=require("helmet");
+const rateLimit=require("express-rate-limit");
 
 const { sequelize, connectDB } = require('./config/db.js');
 const contactRoutes = require('./routes/contacts.js');
@@ -13,6 +15,8 @@ const courseRoutes = require("./routes/course.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+app.use(helmet());
+app.use(rateLimit({ windowMs:15*60*1000, max:100 }));
 
 // Middleware
 app.use(cors());

@@ -8,6 +8,12 @@ router.get('/search', async (req, res) => {
     const { q } = req.query;
     if (!q) return res.json([]);
 
+    if(q.length > 50){
+      return res.status(400).json({
+        error:"Search too long"
+      });
+    }
+
     const doctors = await DoctorContact.findAll({
       where: { name: { [Op.iLike]: `%${q.trim()}%` } }, // استخدام iLike في Postgres
       limit: 8
