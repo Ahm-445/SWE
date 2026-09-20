@@ -56,7 +56,7 @@ router.post("/register", async (req, res) => {
     }
 
     const newUser = await User.create({
-      name: String(name).trim(),
+      name: validator.escape( String(name).trim()),
       email: String(email).trim().toLowerCase(),
       role: "student",
       term_level: String(term_level).trim(),
