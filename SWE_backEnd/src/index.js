@@ -20,12 +20,30 @@ app.use(rateLimit({ windowMs:15*60*1000, max:100 }));
 
 // Middleware
 app.use(cors({
-  origin: [
-    "https://sweksu.fyi",
-    "http://localhost:5173"
-  ],
-  credentials: true
+  origin: function (origin, callback) {
+
+    const allowedOrigins = [
+      "https://sweksu.fyi",
+      "http://localhost:5173"
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization"
+  ]
 }));
+
+app.options("*", cors());
+
 app.use(express.json());
 
 // Routes
