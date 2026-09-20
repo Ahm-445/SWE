@@ -24,6 +24,7 @@ app.use(cors({
 
     const allowedOrigins = [
       "https://sweksu.fyi",
+      "https://www.sweksu.fyi",
       "http://localhost:5173"
     ];
 
