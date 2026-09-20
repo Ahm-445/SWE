@@ -19,7 +19,13 @@ app.use(helmet());
 app.use(rateLimit({ windowMs:15*60*1000, max:100 }));
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://sweksu.fyi",
+    "http://localhost:5173"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
