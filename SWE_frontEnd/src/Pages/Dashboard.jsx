@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { courses } from "../data/courses";
-
 import UpcomingExams from "../Components/dashboard/UpcomingExams";
 import DashboardHero from "../Components/dashboard/DashboardHero";
 import StatsSection from "../Components/dashboard/StatsSection";
 import CoursesSection from "../Components/dashboard/CoursesSection";
 import StudyIdea from "../Components/dashboard/StudyIdea";
 import Curriculum from "../Components/dashboard/Curriculum";
+import Zkr from "../Components/dashboard/Zkr"
 
 const levelNames = {
   third: "المستوى الثالث",
@@ -226,6 +226,7 @@ export default function Dashboard() {
         <div className=" w-full xl:w-[330px] flex-col space-y-6 shrink-0 ">
           <UpcomingExams courses={currentCourses} />
           <StudyIdea />
+          <Zkr/>
         </div>
 
         </div>
