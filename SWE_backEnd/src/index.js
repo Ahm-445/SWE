@@ -41,7 +41,6 @@ app.use(cors({
     "Authorization"
   ]
 }));
-
 app.use(express.json());
 
 // Routes
