@@ -43,10 +43,6 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    name = validator.escape(
-      String(name).trim()
-    );
-
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
