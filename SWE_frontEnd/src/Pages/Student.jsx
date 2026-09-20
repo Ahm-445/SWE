@@ -52,9 +52,9 @@ export default function Student() {
 
     if (
       loginData.password.length < 8 ||
-      !/[A-Za-z]/.test(signupData.password) ||
-      !/[0-9]/.test(signupData.password) ||
-      !/[!@#$%^&*]/.test(signupData.password)
+      !/[A-Za-z]/.test(loginData.password) ||
+      !/[0-9]/.test(loginData.password) ||
+      !/[!@#$%^&*]/.test(loginData.password)
     ) {
 
       showPopup(
