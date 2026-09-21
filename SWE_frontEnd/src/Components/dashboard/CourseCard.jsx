@@ -81,14 +81,7 @@ export default function CourseCard({ course, progress, onOpen }) {
           />
         </div>
 
-        {course.prerequisite && (
-          <div className="mt-5 bg-white rounded-2xl border border-[#e6dfd5] p-4">
-            <p className="text-xs text-gray-400 font-bold">المتطلب السابق</p>
-            <p className="text-sm font-extrabold text-gray-700 mt-1">
-              {course.prerequisite}
-            </p>
-          </div>
-        )}
+  
       </div>
     </div>
   );
