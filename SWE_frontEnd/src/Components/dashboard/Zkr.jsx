@@ -1,19 +1,12 @@
 import { Mosque } from "lucide-react";
-import { useMemo } from "react";
 import azkar from "../../data/azkar.json";
 
+const categories = Object.keys(azkar);
+const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+const categoryAzkar = azkar[randomCategory];
+const randomZkr = categoryAzkar[Math.floor(Math.random() * categoryAzkar.length)];
 
 export default function Zkr() {
-    const randomZkr = useMemo(() => {
-    const categories = Object.keys(azkar);
-    const randomCategory =
-      categories[Math.floor(Math.random() * categories.length)];
-    const categoryAzkar = azkar[randomCategory];
-    return categoryAzkar[
-      Math.floor(Math.random() * categoryAzkar.length)
-    ];
-  }, []);
-
   return (
     <div className="bg-white rounded-[2rem] shadow-sm p-6 text-gray-800 relative overflow-hidden border border-[#e6dfd5]">
       <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-amber-100/50 blur-3xl"></div>

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Search, User, BookOpen, Loader2, AlertCircle } from "lucide-react";
+/* eslint-disable react-hooks/set-state-in-effect -- search state is intentionally synchronized with query changes. */
+import { useEffect, useRef, useState } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
 
 import SearchBox from "../Components/evaluation/SearchBox";
 import EvaluationResults from "../Components/evaluation/EvaluationResults";

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Countdown({ date }) {
-  const calculateTime = () => {
+  const calculateTime = useCallback(() => {
     const now = new Date();
     const target = new Date(`${date}T00:00:00`);
 
@@ -19,7 +19,7 @@ export default function Countdown({ date }) {
     return {
       days
     };
-  };
+  }, [date]);
 
   const [time, setTime] = useState(calculateTime());
 
@@ -29,7 +29,7 @@ export default function Countdown({ date }) {
     }, 60000);
 
     return () => clearInterval(timer);
-  }, [date]);
+  }, [calculateTime]);
 
   if (!time) {
     return (

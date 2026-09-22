@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+/* eslint-disable react-hooks/set-state-in-effect -- search state is intentionally synchronized with query changes. */
+import { useState, useEffect, useRef } from "react";
 import { Search, User, Mail, MapPin, Building2 } from "lucide-react";
 
 const API_BASE = "https://swe-78u0.onrender.com/api/contacts"; 

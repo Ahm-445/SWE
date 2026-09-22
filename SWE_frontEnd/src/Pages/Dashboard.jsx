@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components -- curriculum data is shared with course helpers. */
+/* eslint-disable react-hooks/set-state-in-effect -- progress loading intentionally updates request state. */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { courses } from "../data/courses";
@@ -78,7 +80,10 @@ export default function Dashboard() {
   const user = getStoredUser();
 
   const currentLevel = user?.term_level || "third";
-  const currentCourses = coursesByLevel[currentLevel] || [];
+  const currentCourses = useMemo(
+    () => coursesByLevel[currentLevel] || [],
+    [currentLevel]
+  );
   const currentLevelName = levelNames[currentLevel] || "المستوى الدراسي";
 
   const totalHours = useMemo(

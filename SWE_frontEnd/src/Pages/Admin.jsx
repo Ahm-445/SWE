@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect -- data loading effects intentionally update request state. */
+/* eslint-disable react-hooks/exhaustive-deps -- fetches are deliberately scoped to selection and first mount. */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminHeader from "../Components/admin/AdminHeader";
@@ -9,13 +11,10 @@ import AdminStudents from "../Components/admin/AdminStudents";
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
-  const [students, setStudents] = useState([]);
   const [allStudents, setAllStudents] = useState([]);
-  const [allStudentsCount, setAllStudentsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [approvingId, setApprovingId] = useState(null);
-  const [editingContent,setEditingContent]=useState(null);
 
   const [stats,setStats] = useState({
     students:0,
@@ -51,13 +50,13 @@ export default function AdminDashboard() {
   const token = localStorage.getItem("token");
   const storedUser = localStorage.getItem("user");
 
-  let currentUser = null;
-
-  try {
-    currentUser = storedUser ? JSON.parse(storedUser) : null;
-  } catch {
-    currentUser = null;
-  }
+  const currentUser = (() => {
+    try {
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   // Fetch pending students
   const fetchStudents = async () => {
@@ -88,8 +87,6 @@ export default function AdminDashboard() {
         );
       }
 
-      setStudents(data);
-
       const allResponse = await fetch(`${API_BASE}/students`, {
         method: "GET",
         headers: {
@@ -102,7 +99,6 @@ export default function AdminDashboard() {
 
       if (allResponse.ok && Array.isArray(allData)) {
         setAllStudents(allData);
-        setAllStudentsCount(allData.length);
       }
     } catch (err) {
       console.error(err);
@@ -143,12 +139,6 @@ export default function AdminDashboard() {
         );
       }
       // Remove approved student from pending list
-      setStudents((currentStudents) =>
-        currentStudents.filter(
-          (student) => student.id !== studentId
-        )
-      );
-
       setAllStudents((currentStudents) =>
         currentStudents.map((student) =>
           student.id === studentId

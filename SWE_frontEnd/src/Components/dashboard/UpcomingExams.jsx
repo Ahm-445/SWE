@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, ChevronLeft } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import Countdown from "../common/Countdown";
 
 const API_BASE = "https://swe-78u0.onrender.com/api";
