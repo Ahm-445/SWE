@@ -20,7 +20,7 @@ export default function AbsenceCard({ course, onUpdateHours, onSetExactHours, on
 
   // تحديد الحالة
   let statusBadge = { label: "في أمان", color: "bg-emerald-50 text-emerald-700 border-emerald-200", barColor: "bg-emerald-500", icon: ShieldCheck };
-  if (absentHours >= maxAllowedAbsenceHours) {
+  if (absentHours > maxAllowedAbsenceHours) {
     statusBadge = { label: "محروم (تجاوزت الحد)", color: "bg-red-50 text-red-700 border-red-200", barColor: "bg-red-500", icon: XCircle };
   } else if (percentage >= 15) {
     statusBadge = { label: "تنبيه (اقتربت من الحرمان)", color: "bg-amber-50 text-amber-700 border-amber-200", barColor: "bg-amber-500", icon: AlertTriangle };
