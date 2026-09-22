@@ -15,6 +15,9 @@ export default function Student() {
     const [registrationId, setRegistrationId] = useState("");
     const [otpCode, setOtpCode] = useState("");
     const [resendSeconds, setResendSeconds] = useState(0);
+    const [resetId, setResetId] = useState("");
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetData, setResetData] = useState({ code: "", password: "", confirmPassword: "" });
 
     const API_BASE = "https://swe-78u0.onrender.com/api/auth";
 
@@ -50,7 +53,7 @@ export default function Student() {
     });
 
   useEffect(() => {
-    if (tab !== "OTP" || resendSeconds <= 0) return undefined;
+    if ((tab !== "OTP" && tab !== "ResetOTP") || resendSeconds <= 0) return undefined;
     const timer = setInterval(() => setResendSeconds((seconds) => seconds - 1), 1000);
     return () => clearInterval(timer);
   }, [tab, resendSeconds]);
@@ -276,6 +279,80 @@ export default function Student() {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 404) throw new Error("البريد الإلكتروني غير مسجل");
+        throw new Error(data.error || "تعذر إرسال رمز الاستعادة");
+      }
+      setResetId(data.resetId);
+      setResetData({ code: "", password: "", confirmPassword: "" });
+      setResendSeconds(data.resendAvailableIn || 60);
+      setTab("ResetOTP");
+    } catch (err) {
+      showPopup(err.message || "حدث خطأ أثناء طلب الاستعادة");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (resetData.password !== resetData.confirmPassword) {
+      showPopup("كلمتا المرور غير متطابقتين");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/forgot-password/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resetId, code: resetData.code, password: resetData.password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "تعذر تغيير كلمة المرور");
+      setResetId("");
+      setResetData({ code: "", password: "", confirmPassword: "" });
+      setTab("Login");
+      showPopup("تم تغيير كلمة المرور. يمكنك تسجيل الدخول الآن.", "success");
+    } catch (err) {
+      showPopup(err.message || "حدث خطأ أثناء تغيير كلمة المرور");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendResetCode = async () => {
+    if (resendSeconds > 0) return;
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/forgot-password/resend`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resetId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.resendAvailableIn) setResendSeconds(data.resendAvailableIn);
+        throw new Error(data.error || "تعذر إعادة إرسال الرمز");
+      }
+      setResendSeconds(data.resendAvailableIn || 60);
+      showPopup("تم إرسال رمز جديد إلى بريدك الجامعي.", "success");
+    } catch (err) {
+      showPopup(err.message || "تعذر إعادة الإرسال");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div dir="rtl" className="w-full min-h-screen bg-[#faf5ef] font-custom p-4 md:p-8 pb-36 flex flex-col">
       <div className="max-w-4xl mx-auto w-full flex-1 mb-16">
@@ -324,7 +401,7 @@ export default function Student() {
 
         {/* صندوق البحث */}
         <div className="bg-white rounded-3xl shadow-sm border border-[#e6dfd5] p-5 md:p-7 mb-8">
-          {tab !== "OTP" && <div className="flex bg-[#fbf8f3] p-1.5 rounded-2xl border border-[#e6dfd5] max-w-sm mx-auto mb-6">
+          {tab !== "OTP" && tab !== "ForgotPassword" && tab !== "ResetOTP" && <div className="flex bg-[#fbf8f3] p-1.5 rounded-2xl border border-[#e6dfd5] max-w-sm mx-auto mb-6">
             <button
               onClick={() => { setTab("Login");}}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
@@ -366,6 +443,21 @@ export default function Student() {
               >
                 {isLoading ? "جاري تسجيل الدخول..." : " تسجيل الدخول"}
               </button>
+              <button type="button" onClick={() => { setResetEmail(loginData.email); setTab("ForgotPassword"); }} className="block mx-auto mt-4 text-sm font-bold text-amber-700 hover:text-amber-800">
+                نسيت كلمة المرور؟
+              </button>
+            </form>
+          )}
+
+          {tab === "ForgotPassword" && (
+            <form onSubmit={handleForgotPassword} className="max-w-sm mx-auto text-center">
+              <h2 className="text-xl font-extrabold text-gray-800">استعادة كلمة المرور</h2>
+              <p className="text-sm text-gray-500 mt-2 mb-5">أدخل بريدك الجامعي وسنرسل رمز تحقق لإعادة تعيين كلمة المرور.</p>
+              <input type="email" dir="ltr" autoFocus value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="400000000@student.ksu.edu.sa" className="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-sm" />
+              <button type="submit" disabled={isLoading} className="w-full bg-amber-500 disabled:bg-amber-300 text-white font-bold py-3.5 rounded-2xl hover:bg-amber-600 transition-colors mt-4">
+                {isLoading ? "جارٍ إرسال الرمز..." : "إرسال رمز التحقق"}
+              </button>
+              <button type="button" onClick={() => setTab("Login")} className="mt-4 text-sm text-gray-500 underline">العودة لتسجيل الدخول</button>
             </form>
           )}
 
@@ -452,6 +544,21 @@ export default function Student() {
               <button type="button" onClick={handleManualReview} disabled={isLoading} className="block mx-auto mt-5 text-xs text-gray-500 underline disabled:text-gray-300">
                 لم يصل الرمز بعد المحاولة؟ أرسل طلبي للإدارة
               </button>
+            </form>
+          )}
+
+          {tab === "ResetOTP" && (
+            <form onSubmit={handleResetPassword} className="max-w-sm mx-auto text-center">
+              <h2 className="text-xl font-extrabold text-gray-800">تعيين كلمة مرور جديدة</h2>
+              <p className="text-sm text-gray-500 mt-2 mb-5">أدخل رمز البريد ثم كلمة المرور الجديدة.</p>
+              <input type="text" inputMode="numeric" dir="ltr" maxLength="6" autoFocus value={resetData.code} onChange={(e) => setResetData({ ...resetData, code: e.target.value.replace(/\D/g, "").slice(0, 6) })} placeholder="000000" className="w-full text-center tracking-[0.55em] px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-xl" />
+              <input type="password" value={resetData.password} onChange={(e) => setResetData({ ...resetData, password: e.target.value })} placeholder="كلمة المرور الجديدة" className="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-sm mt-4" />
+              <input type="password" value={resetData.confirmPassword} onChange={(e) => setResetData({ ...resetData, confirmPassword: e.target.value })} placeholder="تأكيد كلمة المرور الجديدة" className="w-full px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-sm mt-4" />
+              <button type="submit" disabled={isLoading || resetData.code.length !== 6} className="w-full bg-amber-500 disabled:bg-amber-300 text-white font-bold py-3.5 rounded-2xl hover:bg-amber-600 transition-colors mt-4">
+                {isLoading ? "جارٍ تغيير كلمة المرور..." : "تغيير كلمة المرور"}
+              </button>
+              <p className="text-sm text-gray-500 mt-5">{resendSeconds > 0 ? `يمكنك إعادة الإرسال خلال ${resendSeconds} ثانية` : "لم يصلك الرمز؟"}</p>
+              <button type="button" onClick={handleResendResetCode} disabled={isLoading || resendSeconds > 0} className="mt-2 text-sm font-bold text-amber-700 disabled:text-gray-400 disabled:cursor-not-allowed">إعادة إرسال الرمز</button>
             </form>
           )}
         </div>
