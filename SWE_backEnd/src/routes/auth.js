@@ -1,68 +1,95 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
 const validator = require("validator");
+const { sendVerificationCode } = require("../services/email");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
+const OTP_TTL_MS = 10 * 60 * 1000;
+const RESEND_COOLDOWN_MS = 60 * 1000;
+const MAX_OTP_ATTEMPTS = 5;
+// This data is intentionally in memory: it is never a User record until OTP succeeds.
+const registrationAttempts = new Map();
 
 if (!JWT_SECRET) {
   console.warn("Warning: JWT_SECRET is not configured.");
 }
 
-// Register Route
+const cleanExpiredAttempts = () => {
+  const now = Date.now();
+  for (const [id, attempt] of registrationAttempts) {
+    if (attempt.expiresAt <= now) registrationAttempts.delete(id);
+  }
+};
+
+const hashOtp = (code) => crypto
+  .createHmac("sha256", process.env.OTP_HASH_SECRET || JWT_SECRET || "development-only-secret")
+  .update(code)
+  .digest("hex");
+
+const createOtp = () => crypto.randomInt(100000, 1000000).toString();
+
+const validateRegistration = async ({ name, email, term_level, password }) => {
+  if (!name || !email || !term_level || !password) {
+    return { error: "Name, email, term level, and password are required." };
+  }
+
+  if (
+    password.length < 8 ||
+    !/[A-Za-z]/.test(password) ||
+    !/[0-9]/.test(password) ||
+    !/[!@#$%^&*]/.test(password)
+  ) {
+    return { error: "Password must contain at least 8 characters, a letter, number and special character." };
+  }
+
+  const cleanEmail = String(email).trim().toLowerCase();
+  if (!/^\d{9}@student\.ksu\.edu\.sa$/.test(cleanEmail)) {
+    return { error: "Only valid university email allowed" };
+  }
+
+  const existingUser = await User.findOne({ where: { email: cleanEmail } });
+  if (existingUser) return { error: "Email already registered." };
+
+  return {
+    data: {
+      name: validator.escape(String(name).trim()),
+      email: cleanEmail,
+      term_level: String(term_level).trim(),
+      passwordHash: await bcrypt.hash(password, 10),
+    },
+  };
+};
+
+const sendCodeForAttempt = async (attempt) => {
+  const code = createOtp();
+  attempt.otpHash = hashOtp(code);
+  attempt.expiresAt = Date.now() + OTP_TTL_MS;
+  attempt.resendAvailableAt = Date.now() + RESEND_COOLDOWN_MS;
+  attempt.attempts = 0;
+  await sendVerificationCode({ email: attempt.data.email, code });
+};
+
+// Starts a registration, but does NOT create a user in the database.
 router.post("/register", async (req, res) => {
   try {
     const { name, email, term_level, password } = req.body;
+    const result = await validateRegistration({ name, email, term_level, password });
+    if (result.error) return res.status(400).json({ error: result.error });
 
-    if(
-      password.length < 8 ||
-      !/[A-Za-z]/.test(password) ||
-      !/[0-9]/.test(password) ||
-      !/[!@#$%^&*]/.test(password)
-      ){
-      return res.status(400).json({
-        error:"Password must contain at least 8 characters, a letter, number and special character."
-      });
-    }
-
-    if (!name || !email || !term_level || !password) {
-      return res.status(400).json({
-        error: "Name, email, term level, and password are required.",
-      });
-    }
-
-    const cleanEmail = String(email)
-      .trim()
-      .toLowerCase();
-
-    if(!cleanEmail.endsWith("@student.ksu.edu.sa")){
-      return res.status(400).json({
-        error:"Only university email allowed"
-      });
-    }
-
-    const existingUser = await User.findOne({ where: { email } });
-
-    if (existingUser) {
-      return res.status(400).json({
-        error: "Email already registered.",
-      });
-    }
-
-    const newUser = await User.create({
-      name: validator.escape( String(name).trim()),
-      email: String(email).trim().toLowerCase(),
-      role: "student",
-      term_level: String(term_level).trim(),
-      password,
-    });
+    cleanExpiredAttempts();
+    const registrationId = crypto.randomUUID();
+    const attempt = { data: result.data };
+    await sendCodeForAttempt(attempt);
+    registrationAttempts.set(registrationId, attempt);
 
     res.status(201).json({
-      message:
-        "Registration successful. Your account is pending admin approval.",
-      userId: newUser.id,
+      message: "Verification code sent.",
+      registrationId,
+      resendAvailableIn: 60,
     });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
@@ -78,9 +105,84 @@ router.post("/register", async (req, res) => {
     }
 
     console.error("Register error:", error);
-    res.status(500).json({
-      error: "Server error during registration.",
+    res.status(error.code === "EMAIL_NOT_CONFIGURED" ? 503 : 500).json({
+      error: error.code === "EMAIL_NOT_CONFIGURED" ? "Email service is not configured." : "Could not send verification code.",
     });
+  }
+});
+
+router.post("/register/resend", async (req, res) => {
+  try {
+    cleanExpiredAttempts();
+    const attempt = registrationAttempts.get(req.body.registrationId);
+    if (!attempt) return res.status(410).json({ error: "Registration session expired. Please register again." });
+
+    const remainingMs = attempt.resendAvailableAt - Date.now();
+    if (remainingMs > 0) {
+      return res.status(429).json({ error: "Please wait before requesting another code.", resendAvailableIn: Math.ceil(remainingMs / 1000) });
+    }
+
+    await sendCodeForAttempt(attempt);
+    res.json({ message: "A new verification code was sent.", resendAvailableIn: 60 });
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    res.status(error.code === "EMAIL_NOT_CONFIGURED" ? 503 : 500).json({ error: "Could not resend verification code." });
+  }
+});
+
+router.post("/register/verify", async (req, res) => {
+  try {
+    cleanExpiredAttempts();
+    const { registrationId, code } = req.body;
+    const attempt = registrationAttempts.get(registrationId);
+    if (!attempt) return res.status(410).json({ error: "Registration session expired. Please register again." });
+
+    if (!/^\d{6}$/.test(String(code || ""))) {
+      return res.status(400).json({ error: "Enter the six-digit verification code." });
+    }
+    if (++attempt.attempts > MAX_OTP_ATTEMPTS) {
+      registrationAttempts.delete(registrationId);
+      return res.status(429).json({ error: "Too many incorrect attempts. Please register again." });
+    }
+    if (!crypto.timingSafeEqual(Buffer.from(attempt.otpHash), Buffer.from(hashOtp(String(code))))) {
+      return res.status(400).json({ error: "Invalid verification code." });
+    }
+
+    const user = await User.create({
+      name: attempt.data.name,
+      email: attempt.data.email,
+      role: "student",
+      state: "active",
+      term_level: attempt.data.term_level,
+      password: attempt.data.passwordHash,
+    });
+    registrationAttempts.delete(registrationId);
+    res.status(201).json({ message: "Email verified. You can now sign in.", userId: user.id });
+  } catch (error) {
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res.status(400).json({ error: "Email already registered." });
+    }
+    console.error("Verify OTP error:", error);
+    res.status(500).json({ error: "Could not verify registration." });
+  }
+});
+
+// Explicit support fallback only: the user is saved as pending for an admin to review.
+router.post("/register/request-manual-review", async (req, res) => {
+  try {
+    cleanExpiredAttempts();
+    const attempt = registrationAttempts.get(req.body.registrationId);
+    if (!attempt) return res.status(410).json({ error: "Registration session expired. Please register again." });
+    const user = await User.create({
+      name: attempt.data.name, email: attempt.data.email, role: "student", state: "pending",
+      term_level: attempt.data.term_level, password: attempt.data.passwordHash,
+    });
+    registrationAttempts.delete(req.body.registrationId);
+    res.status(201).json({ message: "Your request was sent to the administrator.", userId: user.id });
+  } catch (error) {
+    if (error.name === "SequelizeUniqueConstraintError") return res.status(400).json({ error: "Email already registered." });
+    console.error("Manual review registration error:", error);
+    res.status(500).json({ error: "Could not submit manual review request." });
   }
 });
 

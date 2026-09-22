@@ -1,5 +1,5 @@
 import { LogIn, UserRoundArrowLeft,} from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 export default function Student() {
@@ -12,9 +12,11 @@ export default function Student() {
       message:""
     });    
     const [isLoading, setIsLoading] = useState(false);
+    const [registrationId, setRegistrationId] = useState("");
+    const [otpCode, setOtpCode] = useState("");
+    const [resendSeconds, setResendSeconds] = useState(0);
 
     const API_BASE = "https://swe-78u0.onrender.com/api/auth";
-
 
     const showPopup = (message, type="error") => {
       setPopup({
@@ -46,6 +48,12 @@ export default function Student() {
       password: "",
       confirmPassword: "",
     });
+
+  useEffect(() => {
+    if (tab !== "OTP" || resendSeconds <= 0) return undefined;
+    const timer = setInterval(() => setResendSeconds((seconds) => seconds - 1), 1000);
+    return () => clearInterval(timer);
+  }, [tab, resendSeconds]);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -189,7 +197,10 @@ export default function Student() {
       }
 
       setIsLoading(false);
-      setTab("Login");
+      setRegistrationId(data.registrationId);
+      setOtpCode("");
+      setResendSeconds(data.resendAvailableIn || 60);
+      setTab("OTP");
 
     } catch (err) {
       showPopup(err.message);
@@ -197,6 +208,72 @@ export default function Student() {
       setIsLoading(false);
     }
     
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/register/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ registrationId, code: otpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "فشل التحقق من الرمز");
+
+      setRegistrationId("");
+      setOtpCode("");
+      setTab("Login");
+      showPopup("تم تفعيل حسابك. يمكنك تسجيل الدخول الآن.", "success");
+    } catch (err) {
+      showPopup(err.message || "حدث خطأ أثناء التحقق");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendSeconds > 0) return;
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/register/resend`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ registrationId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.resendAvailableIn) setResendSeconds(data.resendAvailableIn);
+        throw new Error(data.error || "فشل إرسال رمز جديد");
+      }
+      setResendSeconds(data.resendAvailableIn || 60);
+      showPopup("تم إرسال رمز تحقق جديد إلى بريدك الجامعي.", "success");
+    } catch (err) {
+      showPopup(err.message || "تعذر إعادة الإرسال");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleManualReview = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${API_BASE}/register/request-manual-review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ registrationId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "تعذر إرسال الطلب للإدارة");
+      setRegistrationId("");
+      setTab("Login");
+      showPopup("تم إرسال طلبك للإدارة للمراجعة.", "success");
+    } catch (err) {
+      showPopup(err.message || "حدث خطأ أثناء إرسال الطلب");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -247,7 +324,7 @@ export default function Student() {
 
         {/* صندوق البحث */}
         <div className="bg-white rounded-3xl shadow-sm border border-[#e6dfd5] p-5 md:p-7 mb-8">
-          <div className="flex bg-[#fbf8f3] p-1.5 rounded-2xl border border-[#e6dfd5] max-w-sm mx-auto mb-6">
+          {tab !== "OTP" && <div className="flex bg-[#fbf8f3] p-1.5 rounded-2xl border border-[#e6dfd5] max-w-sm mx-auto mb-6">
             <button
               onClick={() => { setTab("Login");}}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
@@ -264,7 +341,7 @@ export default function Student() {
             >
               <UserRoundArrowLeft className="w-4 h-4" /> تسجيل جديد
             </button>
-          </div>
+          </div>}
 
           {tab === "Login" && (
             <form onSubmit={handleLoginSubmit}>
@@ -347,6 +424,36 @@ export default function Student() {
               </button>
             </form>
           )}
+
+          {tab === "OTP" && (
+            <form onSubmit={handleVerifyOtp} className="max-w-sm mx-auto text-center">
+              <h2 className="text-xl font-extrabold text-gray-800">تأكيد بريدك الجامعي</h2>
+              <p className="text-sm text-gray-500 mt-2 mb-5">
+                أدخل الرمز المكوّن من ٦ أرقام الذي أرسلناه إلى بريدك الجامعي.
+              </p>
+              <input
+                type="text"
+                inputMode="numeric"
+                dir="ltr"
+                maxLength="6"
+                autoFocus
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder="000000"
+                className="w-full text-center tracking-[0.55em] px-4 py-3.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-[#fdfaf7] text-gray-800 text-xl"
+              />
+              <button type="submit" disabled={isLoading || otpCode.length !== 6} className="w-full bg-amber-500 disabled:bg-amber-300 text-white font-bold py-3.5 rounded-2xl hover:bg-amber-600 transition-colors mt-4">
+                {isLoading ? "جارٍ التحقق..." : "تأكيد الرمز"}
+              </button>
+              <p className="text-sm text-gray-500 mt-5">{resendSeconds > 0 ? `يمكنك إعادة الإرسال خلال ${resendSeconds} ثانية` : "لم يصلك الرمز؟"}</p>
+              <button type="button" onClick={handleResendOtp} disabled={isLoading || resendSeconds > 0} className="mt-2 text-sm font-bold text-amber-700 disabled:text-gray-400 disabled:cursor-not-allowed">
+                إعادة إرسال الرمز
+              </button>
+              <button type="button" onClick={handleManualReview} disabled={isLoading} className="block mx-auto mt-5 text-xs text-gray-500 underline disabled:text-gray-300">
+                لم يصل الرمز بعد المحاولة؟ أرسل طلبي للإدارة
+              </button>
+            </form>
+          )}
         </div>
                 
 
@@ -354,4 +461,3 @@ export default function Student() {
     </div>
   );
 }
-        
