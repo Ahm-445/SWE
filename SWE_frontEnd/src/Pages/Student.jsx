@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 export default function Student() {
     const [tab, setTab] = useState("Login");
     const navigate = useNavigate();
-    const [error, setError] = useState("");
     const [popup, setPopup] = useState({
       show:false,
       type:"error",
@@ -129,7 +128,6 @@ export default function Student() {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     if(signupData.name.length < 3){
       showPopup(

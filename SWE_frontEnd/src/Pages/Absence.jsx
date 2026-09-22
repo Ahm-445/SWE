@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+/* eslint-disable react-hooks/set-state-in-effect -- search suggestions are intentionally derived from the query. */
+import { useState, useEffect, useRef } from "react";
 import { 
   Search, Clock, BookOpen, RotateCcw 
 } from "lucide-react";
@@ -10,13 +11,13 @@ const COURSES_DATA = [ { code: "فيز ١٠٣", lecture: 3, lab: 2, tutorial: 0 
 export default function Absence() {
   const storedUser = localStorage.getItem("user");
 
-  let user = null;
-
-  try {
-    user = storedUser ? JSON.parse(storedUser) : null;
-  } catch {
-    user = null;
-  }
+  const user = (() => {
+    try {
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  })();
 
   const storageKey = user?.id
     ? `swe_absence_courses_${user.id}`
@@ -79,7 +80,7 @@ export default function Absence() {
 
     setSelectedCourses([
       ...selectedCourses,
-      { id: Date.now().toString(), ...course, absentHours: 0}]);
+      { id: `${course.code}-${selectedCourses.length}`, ...course, absentHours: 0}]);
     setShowDropdown(false);
     setSearchQuery("");
   };

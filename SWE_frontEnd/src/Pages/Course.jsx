@@ -227,7 +227,7 @@ export default function Course() {
     }
 
     const newValue =
-      !Boolean(completedItems[contentId]);
+      !completedItems[contentId];
 
     // تحديث فوري للواجهة
     setCompletedItems((prev) => ({
@@ -725,5 +725,4 @@ export default function Course() {
     </div>
   );
 }
-
 

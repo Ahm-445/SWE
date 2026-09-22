@@ -13,41 +13,29 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+function getStoredUser() {
+  const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+
+  if (!token || !storedUser) return null;
+
+  try {
+    return JSON.parse(storedUser);
+  } catch {
+    return null;
+  }
+}
+
 export default function Navbar() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getStoredUser);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Invalid user data");
-        setUser(null);
-      }
-    } else {
-      setUser(null);
-    }
-
     // لو صار Login / Logout في صفحة ثانية
     const handleStorageChange = () => {
-      const token = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
-
-      if (token && storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-        } catch {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
+      setUser(getStoredUser());
     };
 
     window.addEventListener("storage", handleStorageChange);
