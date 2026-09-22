@@ -22,8 +22,8 @@ export default function Home() {
       <div className="pointer-events-none absolute -right-24 top-8 h-72 w-72 rounded-full bg-[#e8d8c7]/50 blur-3xl" />
       <div className="pointer-events-none absolute -left-28 top-96 h-80 w-80 rounded-full bg-[#dce9e5]/55 blur-3xl" />
 
-      <section className="relative mx-auto grid min-h-[520px] max-w-7xl items-center gap-6 px-5 py-16 sm:gap-10 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-12 lg:py-20">
-        <div className="order-2 text-center lg:order-1 lg:text-right">
+      <section className="relative mx-auto grid min-h-[520px] max-w-7xl items-center gap-8 px-5 py-14 sm:gap-10 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-12 lg:py-20">
+        <div className="order-1 text-center lg:text-right">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#e7d9cc] bg-white/70 px-4 py-2 text-sm font-bold text-[#9a715a] shadow-sm"><Sparkles className="h-4 w-4" />مجتمع طلاب هندسة البرمجيات · جامعة الملك سعود</div>
           <h1 className="text-4xl font-black leading-[1.25] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">مساحتك لكل ما<span className="block text-[#a26d4e]">يهم طالب هندسة البرمجيات</span></h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg lg:mx-0">منصة تجمع الأدوات والخدمات التي تجعل رحلتك الجامعية أوضح وأسهل؛ من تنظيم المقررات وحساب المعدل إلى متابعة الأخبار والتواصل مع مجتمعك.</p>
@@ -33,7 +33,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="order-1 mx-auto w-full max-w-md lg:order-2 lg:max-w-none">
+        <div className="order-2 mx-auto w-full max-w-md lg:max-w-none">
           <div className="relative rounded-[2rem] border border-white/80 bg-white/65 p-5 shadow-2xl shadow-[#6d5544]/10 backdrop-blur-sm sm:p-7">
             <div className="absolute -left-4 -top-4 grid h-14 w-14 place-items-center rounded-2xl bg-[#a26d4e] text-white shadow-lg shadow-[#a26d4e]/25"><GraduationCap className="h-7 w-7" /></div>
             <div className="rounded-2xl bg-slate-900 p-6 text-right text-white sm:p-7"><p className="text-sm text-slate-300">رحلتك الأكاديمية، في لوحة واحدة</p><p className="mt-2 text-2xl font-black">ابدأ يومك بخطوة منظمة</p><div className="mt-6 grid grid-cols-2 gap-3"><div className="rounded-xl bg-white/10 p-3"><p className="text-xs text-slate-300">المهام القادمة</p><p className="mt-1 text-lg font-bold">06 مهام</p></div><div className="rounded-xl bg-white/10 p-3"><p className="text-xs text-slate-300">المعدل التراكمي</p><p className="mt-1 text-lg font-bold">تابعه بسهولة</p></div></div></div>
@@ -42,7 +42,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative border-y border-[#eadfd5] bg-white/55"><div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-x-reverse divide-[#eadfd5] px-4 sm:grid-cols-4 sm:px-8 lg:px-12">{stats.map(({ value, label, icon: Icon }) => <div key={label} className="flex flex-col items-center px-3 py-6 text-center sm:py-8"><Icon className="mb-2 h-5 w-5 text-[#a26d4e]" /><p className="text-2xl font-black text-slate-900 sm:text-3xl">{value}</p><p className="mt-1 text-sm text-slate-500">{label}</p></div>)}</div></section>
+      <section className="relative border-y border-[#eadfd5] bg-white/55">
+        <div className="mx-auto grid max-w-7xl gap-px bg-[#eadfd5] px-4 sm:grid-cols-4 sm:px-8 lg:px-12">
+          {stats.map(({ value, label, icon: Icon }) => <div key={label} className="flex items-center gap-4 bg-[#fcfaf7] px-5 py-4 text-right sm:flex-col sm:justify-center sm:gap-1 sm:px-3 sm:py-8 sm:text-center"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#f3e9df] text-[#a26d4e] sm:mb-2"><Icon className="h-5 w-5" /></div><div><p className="text-xl font-black text-slate-900 sm:text-3xl">{value}</p><p className="mt-0.5 text-sm text-slate-500 sm:mt-1">{label}</p></div></div>)}
+        </div>
+      </section>
 
       <section className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
         <div className="mb-10 text-center"><p className="text-sm font-bold text-[#a26d4e]">ماذا نقدم لك؟</p><h2 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">خدمات صُممت لرحلتك الجامعية</h2><p className="mx-auto mt-3 max-w-xl leading-7 text-slate-600">لأن وقت الطالب مهم، جمعنا أهم الأدوات التي تساعدك على التركيز على ما يصنع الفرق.</p></div>
