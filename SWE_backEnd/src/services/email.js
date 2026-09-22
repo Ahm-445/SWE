@@ -22,15 +22,15 @@ const getTransporter = () => {
   return transporter;
 };
 
-const sendVerificationCode = async ({ email, code }) => {
+const sendVerificationCode = async ({ email, code, subject = "رمز التحقق لحساب SWE KSU", heading = "تأكيد البريد الإلكتروني" }) => {
   await getTransporter().sendMail({
     from: `SWE KSU <${process.env.GMAIL_USER}>`,
     to: email,
-    subject: "رمز التحقق لحساب SWE KSU",
+    subject,
     text: `رمز التحقق الخاص بك هو: ${code}. تنتهي صلاحيته خلال 10 دقائق. لا تشاركه مع أي شخص.`,
     html: `
       <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.7">
-        <h2>تأكيد البريد الإلكتروني</h2>
+        <h2>${heading}</h2>
         <p>رمز التحقق الخاص بك هو:</p>
         <p style="font-size: 28px; font-weight: 700; letter-spacing: 8px">${code}</p>
         <p>ينتهي الرمز خلال 10 دقائق. لا تشاركه مع أي شخص.</p>
