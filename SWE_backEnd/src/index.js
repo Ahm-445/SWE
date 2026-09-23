@@ -36,7 +36,7 @@ app.use(cors({
 
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
     "Authorization"
@@ -59,7 +59,7 @@ const startServer = async () => {
   await connectDB();
   
 
-  await sequelize.sync({alter:true});
+  await sequelize.sync();
   console.log("تمت مزامنة جداول قاعدة البيانات بنجاح 🚀");
 
   app.listen(PORT, () => {
